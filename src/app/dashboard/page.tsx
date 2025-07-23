@@ -1,11 +1,12 @@
 "use client"
 
-import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useSetAtom } from "jotai"
-import { BookText, User } from "lucide-react"
+import { BookText } from "lucide-react"
 
+// Import application components
 import { AudioManager } from "@/components/beats"
+import { BottomHeader } from "@/components/bottom-header" // This now includes the player and breathing widget
 import { Journal } from "@/components/journal"
 import {
   AbsoluteFocusButton,
@@ -16,8 +17,7 @@ import {
 } from "@/components/overlay"
 import { Player } from "@/components/player"
 import { MotivationButton, SurpriseMeButton } from "@/components/popups"
-import { Stats } from "@/components/stats"
-import { Stopwatch } from "@/components/stopwatch"
+import { Stopwatch } from "@/components/stopwatch" // <-- Re-import the Stopwatch timer
 import { ThemeDropdown } from "@/components/theme-toggle"
 import { Todo } from "@/components/todo"
 import { Button } from "@/components/ui/button"
@@ -28,7 +28,7 @@ import { openJournalAtom } from "@/context/data"
 
 import "@/styles/themes.css"
 
-// This component is now just a button that opens the journal panel
+// Helper component for the nav button
 function JournalNavButton() {
   const setJournalOpen = useSetAtom(openJournalAtom)
   return (
@@ -43,6 +43,7 @@ function JournalNavButton() {
   )
 }
 
+// Helper component for the immersive switch
 function ImmersiveModeSwitch() {
   const router = useRouter()
   return (
@@ -67,7 +68,6 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-[var(--background)] font-[family-name:var(--font-geist-sans)]">
       <PomoBreakOverlay />
       <AbsoluteFocusOverlay />
-      {/* The Journal side panel is rendered here, ready to be opened */}
       <Journal />
 
       <div className="flex h-screen flex-col overflow-hidden lg:overflow-hidden">
@@ -82,7 +82,6 @@ export default function DashboardPage() {
             <ImmersiveModeSwitch />
             <AbsoluteFocusButton />
             <AudioManager />
-            {/* THE FIX: This now calls the component that opens the panel */}
             <JournalNavButton />
             <UserSettingNavButton />
             <ThemeDropdown />
@@ -94,18 +93,25 @@ export default function DashboardPage() {
         <main className="grid flex-1 grid-cols-12 gap-4 overflow-y-auto bg-[var(--background)] p-4 lg:min-h-0 lg:overflow-hidden">
           <div className="col-span-12 flex flex-col gap-4 lg:col-span-8 lg:min-h-0">
             <div className="h-96 shrink-0 overflow-hidden rounded-[var(--radius)] border-2 border-dashed border-[var(--border)] bg-[var(--card)] p-4 lg:h-auto lg:min-h-0 lg:flex-1">
-              <div className="h-full overflow-hidden"><Player /></div>
+              <div className="h-full overflow-hidden">
+                <Player />
+              </div>
             </div>
             <div className="shrink-0 rounded-[var(--radius)] border-2 border-dashed border-[var(--border)] bg-[var(--card)] p-4">
-              <Stats />
+              <BottomHeader />
             </div>
           </div>
           <div className="col-span-12 flex flex-col gap-4 lg:col-span-4 lg:overflow-hidden">
             <div className="min-h-96 shrink-0 overflow-hidden rounded-[var(--radius)] border-2 border-dashed border-[var(--border)] bg-[var(--card)] p-4 lg:min-h-0 lg:flex-1">
-              <div className="h-full overflow-hidden px-2"><Todo /></div>
+              <div className="h-full overflow-hidden px-2">
+                <Todo />
+              </div>
             </div>
+            {/* THE FIX: The timer component is now back in its original place. */}
             <div className="shrink-0 rounded-[var(--radius)] border-2 border-dashed border-[var(--border)] bg-[var(--card)] p-2">
-              <div className="overflow-hidden"><Stopwatch /></div>
+              <div className="overflow-hidden">
+                <Stopwatch />
+              </div>
             </div>
           </div>
         </main>

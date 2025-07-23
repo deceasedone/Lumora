@@ -1,12 +1,9 @@
-// app/test/page.tsx
-
 "use client";
 
 import React, { useState, useEffect, useCallback } from 'react';
 import YouTube from 'react-youtube';
-import type { YouTubeProps } from 'react-youtube';
-import { useRouter } from "next/navigation"
-import { motion, AnimatePresence } from 'motion/react';
+import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAtom } from 'jotai';
 import {
   AudioLines,
@@ -16,10 +13,13 @@ import {
   SquareCheckBig,
   Video,
   Sparkles,
-  ChevronLeft
+  ChevronLeft,
+  Shuffle,
+  ArrowLeft,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ThemeDropdown } from '@/components/theme-toggle';
 import { Journal } from '@/components/journal';
 import { AudioManager } from '@/components/beats';
@@ -27,6 +27,16 @@ import { Todo } from '@/components/todo';
 import { Stopwatch } from '@/components/stopwatch';
 import { openAmbientDrawerAtom, openJournalAtom } from '@/context/data';
 import { ImmersiveLogo } from '@/components/ImmersiveLogo';
+import { wallpaperData, allWallpapers, Wallpaper } from '@/lib/wallpaper-data'; // Ensure this path is correct
+
+// --- Helper Icon Components ---
+const YouTubeIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"></path></svg>
+);
+const PixabayIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-2.417 16.949c-.325.325-1.042.325-1.367 0-.325-.325-.325-1.042 0-1.367l1.367-1.367c.325-.325 1.042-.325 1.367 0 .325.325.325 1.042 0 1.367l-1.367 1.367zm.683-10.282c-.512 0-.927.415-.927.927v5.563c0 .512.415.927.927.927s.927-.415.927-.927v-5.563c0-.512-.415-.927-.927-.927zm3.467 6.833c-.512 0-.927.415-.927.927v2.099c0 .512.415.927.927.927s.927-.415.927-.927v-2.099c0-.512-.415-.927-.927-.927zm0-6.833c-.512 0-.927.415-.927.927v2.099c0 .512.415.927.927.927s.927-.415.927-.927v-2.099c0-.512-.415-.927-.927-.927zm3.467 3.416c-.512 0-.927.415-.927.927v5.563c0 .512.415.927.927.927s.927-.415.927-.927v-5.563c0-.512-.415-.927-.927-.927z"></path></svg>
+);
+
 
 // --- Clock Component ---
 function ClockDisplay() {
@@ -62,73 +72,39 @@ function ClockDisplay() {
   );
 }
 
-// --- Icon Components ---
-// const SettingsIcon = () => (
-//     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-// );
-const NextVideoIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>
-);
-const YouTubeIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"></path></svg>
-);
-// NEW: Pixabay Icon, replacing the Pexels one
-const PixabayIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-2.417 16.949c-.325.325-1.042.325-1.367 0-.325-.325-.325-1.042 0-1.367l1.367-1.367c.325-.325 1.042-.325 1.367 0 .325.325.325 1.042 0 1.367l-1.367 1.367zm.683-10.282c-.512 0-.927.415-.927.927v5.563c0 .512.415.927.927.927s.927-.415.927-.927v-5.563c0-.512-.415-.927-.927-.927zm3.467 6.833c-.512 0-.927.415-.927.927v2.099c0 .512.415.927.927.927s.927-.415.927-.927v-2.099c0-.512-.415-.927-.927-.927zm0-6.833c-.512 0-.927.415-.927.927v2.099c0 .512.415.927.927.927s.927-.415.927-.927v-2.099c0-.512-.415-.927-.927-.927zm3.467 3.416c-.512 0-.927.415-.927.927v5.563c0 .512.415.927.927.927s.927-.415.927-.927v-5.563c0-.512-.415-.927-.927-.927z"></path></svg>
-);
 
 // --- Main Page Component ---
-
 export default function ImmersivePage() {
-  const router = useRouter()
-
-  // --- Manual Video Sources ---
-  const youtubeVideoIds = ['B3y6xns0aq8', 'B9VRvOKKwfs', 'NoF-C-XQsiU'];
-  // MODIFIED: Replaced Pexels URLs with Pixabay URLs
-  const pixabayVideoUrls = [
-    'https://cdn.pixabay.com/video/2025/06/17/286278_large.mp4', // Verba
-    'https://cdn.pixabay.com/video/2025/05/04/276624_large.mp4', // Waves
-  ];
+  const router = useRouter();
 
   // --- State Management ---
-  // MODIFIED: Updated player type to 'pixabay'
-  const [activePlayer, setActivePlayer] = useState<'youtube' | 'pixabay' | 'custom'>('youtube');
-  const [currentYoutubeIndex, setCurrentYoutubeIndex] = useState(0);
-  // MODIFIED: Renamed state for clarity
-  const [currentPixabayIndex, setCurrentPixabayIndex] = useState(0); 
-  
+  const [currentWallpaper, setCurrentWallpaper] = useState<Wallpaper>(wallpaperData.mySelections[0]);
   const [isToolbarOpen, setIsToolbarOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const [isJournalOpen, setJournalOpen] = useAtom(openJournalAtom);
   const [isAmbientDrawerOpen, setAmbientDrawerOpen] = useAtom(openAmbientDrawerAtom);
+  
+  // State for the "Change Wallpaper" popover navigation
+  const [changeSource, setChangeSource] = useState<'youtube' | 'pixabay' | null>(null);
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
   // --- Event Handlers ---
-  const handleNextInPlaylist = () => {
-    if (activePlayer === 'youtube') {
-      setCurrentYoutubeIndex((prevIndex) => (prevIndex + 1) % youtubeVideoIds.length);
-    } else if (activePlayer === 'pixabay') { // MODIFIED: Check for 'pixabay'
-      setCurrentPixabayIndex((prevIndex) => (prevIndex + 1) % pixabayVideoUrls.length);
-    }
-  };
-
-  const switchPlayer = (player: 'youtube' | 'pixabay' | 'custom') => { // MODIFIED: Update type
-    setActivePlayer(player);
+  const handleRandomWallpaper = () => {
+    const filteredWallpapers = allWallpapers.filter(w => w.id !== currentWallpaper.id);
+    const randomIndex = Math.floor(Math.random() * filteredWallpapers.length);
+    setCurrentWallpaper(filteredWallpapers[randomIndex]);
   };
 
   const toggleFullScreen = () => {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen();
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      }
+    } else if (document.exitFullscreen) {
+      document.exitFullscreen();
     }
   };
-
 
   return (
     <>
@@ -143,90 +119,37 @@ export default function ImmersivePage() {
       `}</style>
 
       <ClockDisplay />
-
-      <div style={{
-        position: 'fixed', top: '1.25rem', left: '1.25rem',
-        display: 'flex', gap: '0.5rem', background: 'rgba(0, 0, 0, 0.3)',
-        padding: '0.5rem 1rem', borderRadius: '30px', border: '1px solid rgba(255, 255, 255, 0.3)',
-        backdropFilter: 'blur(4px)',
-      }}>
-        <button
-          onClick={() => switchPlayer('youtube')}
-          style={{
-            background: 'none', border: 'none', color: 'white', padding: '0.5rem', cursor: 'pointer',
-            opacity: activePlayer === 'youtube' ? 1 : 0.6,
-          }}
-          title="Switch to YouTube Playlist"
-        >
-          <YouTubeIcon />
-        </button>
-        <button
-          onClick={() => switchPlayer('pixabay')}
-          style={{
-            background: 'none', border: 'none', color: 'white', padding: '0.5rem', cursor: 'pointer',
-            opacity: activePlayer === 'pixabay' ? 1 : 0.6,
-          }}
-          title="Switch to Pixabay Playlist"
-        >
-          <PixabayIcon />
-        </button>
-      </div>
-
+      
       <div className="video-background">
-        {isClient && activePlayer === 'youtube' && (
+        {isClient && currentWallpaper.type === 'youtube' && (
           <YouTube
-            key={youtubeVideoIds[currentYoutubeIndex]}
-            videoId={youtubeVideoIds[currentYoutubeIndex]}
+            key={currentWallpaper.id}
+            videoId={currentWallpaper.id}
             opts={{
               height: '100%',
               width: '100%',
               playerVars: {
-                autoplay: 1,
-                controls: 0,
-                rel: 0,
-                showinfo: 0,
-                modestbranding: 1,
-                loop: 1,
-                fs: 0,
-                cc_load_policy: 0,
-                iv_load_policy: 3,
-                autohide: 0,
-                mute: 1,
-                playlist: youtubeVideoIds[currentYoutubeIndex],
-                vq: 'hd1080',
-                origin: window.location.origin,
-                enablejsapi: 1,
-                widget_referrer: window.location.href,
+                autoplay: 1, controls: 0, rel: 0, showinfo: 0, modestbranding: 1,
+                loop: 1, fs: 0, cc_load_policy: 0, iv_load_policy: 3, autohide: 0,
+                mute: 1, playlist: currentWallpaper.id, vq: 'hd1080',
+                origin: typeof window !== 'undefined' ? window.location.origin : '',
+                enablejsapi: 1, widget_referrer: typeof window !== 'undefined' ? window.location.href : '',
               },
             }}
+            className="video-background"
           />
         )}
-        {/* MODIFIED: Render based on 'pixabay' player and use its state/data */}
-        {activePlayer === 'pixabay' && (
+        {currentWallpaper.type === 'pixabay' && (
           <video
-            key={pixabayVideoUrls[currentPixabayIndex]}
-            src={pixabayVideoUrls[currentPixabayIndex]}
+            key={currentWallpaper.id}
+            src={currentWallpaper.id}
             autoPlay loop muted playsInline
+            className="video-background"
           />
         )}
       </div>
 
       <main>
-
-        <button
-          onClick={handleNextInPlaylist}
-          style={{
-            position: 'fixed', bottom: '2rem', right: '2rem',
-            background: 'rgba(0, 0, 0, 0.5)', border: '1px solid rgba(255, 255, 255, 0.3)',
-            borderRadius: '50%', width: '50px', height: '50px', display: 'flex',
-            justifyContent: 'center', alignItems: 'center', cursor: 'pointer', color: 'white'
-          }}
-          aria-label="Next in Playlist"
-          title="Next in Playlist"
-        >
-          <NextVideoIcon />
-        </button>
-
         <motion.div
           className="absolute bottom-5 left-5 flex items-center gap-2 rounded-full bg-black/30 p-2 text-white backdrop-blur-sm"
           animate={{ width: isToolbarOpen ? 'auto' : 56 }}
@@ -251,9 +174,9 @@ export default function ImmersivePage() {
                 transition={{ duration: 0.3 }}
               >
                 <div className="flex items-center gap-1">
-                <Button variant="ghost" size="icon" onClick={() => router.push("/dashboard")} className="rounded-full hover:bg-white/20" title="Exit Immersive Mode">
-                  <ChevronLeft />
-                </Button>
+                  <Button variant="ghost" size="icon" onClick={() => router.push("/dashboard")} className="rounded-full hover:bg-white/20" title="Exit Immersive Mode">
+                    <ChevronLeft />
+                  </Button>
                   <Button variant="ghost" size="icon" onClick={toggleFullScreen} className="rounded-full hover:bg-white/20" title="Toggle Fullscreen">
                     <Focus />
                   </Button>
@@ -264,6 +187,8 @@ export default function ImmersivePage() {
                     <ThemeDropdown />
                   </div>
                 </div>
+
+                {/* --- TOOLBAR WIDGETS --- */}
                 <Dialog>
                   <DialogTrigger asChild>
                     <Button variant="ghost" size="icon" className="rounded-full hover:bg-white/20" title="Tasks">
@@ -271,17 +196,15 @@ export default function ImmersivePage() {
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="bg-[var(--popover)] p-0">
-                    <DialogHeader className="p-4 pb-0">
-                      <DialogTitle>Your Tasks</DialogTitle>
-                    </DialogHeader>
-                    <div className="h-[60vh] p-4 pt-2">
-                      <Todo />
-                    </div>
+                    <DialogHeader className="p-4 pb-0"><DialogTitle>Your Tasks</DialogTitle></DialogHeader>
+                    <div className="h-[60vh] p-4 pt-2"><Todo /></div>
                   </DialogContent>
                 </Dialog>
+
                 <Button variant="ghost" size="icon" onClick={() => setJournalOpen(true)} className="rounded-full hover:bg-white/20" title="Journal">
                   <BookText />
                 </Button>
+
                 <Dialog>
                   <DialogTrigger asChild>
                     <Button variant="ghost" size="icon" className="rounded-full hover:bg-white/20" title="Focus Timer">
@@ -289,31 +212,75 @@ export default function ImmersivePage() {
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="bg-[var(--popover)] p-4">
-                    <DialogHeader>
-                      <DialogTitle>Focus Timer</DialogTitle>
-                    </DialogHeader>
+                    <DialogHeader><DialogTitle>Focus Timer</DialogTitle></DialogHeader>
                     <Stopwatch />
                   </DialogContent>
                 </Dialog>
 
-                {/* Placeholder Buttons */}
-                <Button variant="ghost" size="icon" onClick={() => alert('My Selections clicked')} className="rounded-full hover:bg-white/20" title="My Selections">
-                  <Sparkles />
+                {/* --- NEW WALLPAPER CONTROLS --- */}
+                <Button variant="ghost" size="icon" onClick={handleRandomWallpaper} className="rounded-full hover:bg-white/20" title="Random Wallpaper">
+                    <Shuffle />
                 </Button>
-                <Button variant="ghost" size="icon" onClick={() => alert('Change Wallpaper clicked')} className="rounded-full hover:bg-white/20" title="Change Wallpaper">
-                  <Video />
-                </Button>
+
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="ghost" size="icon" className="rounded-full hover:bg-white/20" title="My Selections">
+                      <Sparkles />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-56 p-2">
+                    <div className="space-y-1">
+                      <h4 className="px-2 py-1.5 text-sm font-semibold">My Selections</h4>
+                      {wallpaperData.mySelections.map((wallpaper) => (
+                        <Button key={wallpaper.id} variant="ghost" className="w-full justify-start" onClick={() => setCurrentWallpaper(wallpaper)}>
+                          {wallpaper.name}
+                        </Button>
+                      ))}
+                    </div>
+                  </PopoverContent>
+                </Popover>
+
+                <Popover onOpenChange={() => setChangeSource(null)}>
+                  <PopoverTrigger asChild>
+                    <Button variant="ghost" size="icon" className="rounded-full hover:bg-white/20" title="Change Wallpaper">
+                      <Video />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-64 p-2">
+                    {!changeSource ? (
+                      <div className="space-y-1">
+                         <h4 className="px-2 py-1.5 text-sm font-semibold">Choose Source</h4>
+                         <Button variant="ghost" className="w-full justify-start" onClick={() => setChangeSource('youtube')}><YouTubeIcon /> <span className="ml-2">YouTube</span></Button>
+                         <Button variant="ghost" className="w-full justify-start" onClick={() => setChangeSource('pixabay')}><PixabayIcon /> <span className="ml-2">Pixabay</span></Button>
+                      </div>
+                    ) : (
+                      <div>
+                        <div className="mb-2 flex items-center">
+                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setChangeSource(null)}><ArrowLeft className="h-4 w-4" /></Button>
+                          <h4 className="ml-2 text-sm font-semibold capitalize">{changeSource} Categories</h4>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2">
+                          {(changeSource === 'youtube' ? wallpaperData.youtube : wallpaperData.pixabay).map((category) => (
+                            <Button key={category.name} variant="outline" className="flex h-16 flex-col items-center justify-center gap-1 p-1" onClick={() => setCurrentWallpaper(category.wallpapers[0])}>
+                              <category.icon className="h-5 w-5" />
+                              <span className="text-xs text-center">{category.name}</span>
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </PopoverContent>
+                </Popover>
+
               </motion.div>
             )}
           </AnimatePresence>
         </motion.div>
       </main>
-      
       <Journal />
       <div className="hidden">
         <AudioManager />
       </div>
-     
     </>
   );
 }
