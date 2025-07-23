@@ -21,7 +21,7 @@ export function CTA({ onGetStarted }: CTAProps) {
         </div>
 
         {/* Content */}
-        <div className="container mx-auto px-4 relative z-30">
+        <div className="max-w-5xl mx-auto text-center z-30">
           <div className="max-w-5xl mx-auto text-center">
             {/* Icon */}
             <div className="mb-8 flex justify-center">
@@ -38,7 +38,7 @@ export function CTA({ onGetStarted }: CTAProps) {
               Ready to Enter
               <br />
               <span className="bg-gradient-to-r from-purple-400 via-violet-400 to-blue-400 bg-clip-text text-transparent">
-                The Matrix?
+                 LUMORA?
               </span>
             </h2>
 
@@ -58,14 +58,6 @@ export function CTA({ onGetStarted }: CTAProps) {
                 <Zap className="w-6 h-6 mr-3 group-hover:rotate-12 transition-transform duration-300" />
                 Start Your Journey
                 <ArrowRight className="w-6 h-6 ml-3 group-hover:translate-x-1 transition-transform duration-300" />
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className="border-purple-500/50 text-purple-300 hover:bg-purple-500/10 hover:text-white px-12 py-6 text-xl bg-transparent backdrop-blur-sm hover:border-purple-400"
-              >
-                <Star className="w-6 h-6 mr-3" />
-                Watch Demo
               </Button>
             </div>
 

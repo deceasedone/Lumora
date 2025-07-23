@@ -5,17 +5,19 @@ import { motion } from "motion/react"
 interface LumoraLogoProps {
   className?: string
   size?: number
+  coreColor?: string
+  orbitColor?: string
 }
 
 export function LumoraLogo({
   className = "",
   size = 64,
+  coreColor = "var(--accent)",
+  orbitColor = "var(--border)",
 }: LumoraLogoProps) {
   const coreSize = size * 0.25
   const orbitSize = size * 0.75
   const particleSize = size * 0.125
-  const particleColor = "var(--accent)"
-  const orbitColor = "var(--border)"
 
   return (
     <motion.div
@@ -24,8 +26,12 @@ export function LumoraLogo({
     >
       {/* Core */}
       <motion.div
-        className="rounded-full bg-[var(--accent)]"
-        style={{ width: coreSize, height: coreSize }}
+        className="rounded-full"
+        style={{
+          width: coreSize,
+          height: coreSize,
+          backgroundColor: coreColor,
+        }}
       />
 
       {/* Orbit Ring */}
@@ -49,13 +55,14 @@ export function LumoraLogo({
           style={{
             width: particleSize,
             height: particleSize,
-            backgroundColor: particleColor,
+            backgroundColor: coreColor,
+            boxShadow: `0 0 5px ${coreColor}, 0 0 20px ${coreColor}, 0 0 5px ${coreColor}`,
           }}
           animate={{
             boxShadow: [
-              `0 0 5px ${particleColor}`,
-              `0 0 20px ${particleColor}`,
-              `0 0 5px ${particleColor}`,
+              `0 0 5px ${coreColor}`,
+              `0 0 20px ${coreColor}`,
+              `0 0 5px ${coreColor}`,
             ],
           }}
           transition={{

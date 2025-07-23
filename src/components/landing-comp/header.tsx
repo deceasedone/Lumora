@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
-
+import { LumoraLogo } from "../lumora"
 interface HeaderProps {
   onAuthClick: (type: "login" | "signup") => void
 }
@@ -18,13 +18,13 @@ export function Header({ onAuthClick }: HeaderProps) {
           <div className="flex items-center space-x-3">
             <div className="relative">
               <div className="w-10 h-10 bg-gradient-to-br from-purple-400 via-violet-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/25">
-                <span className="text-white font-bold text-lg">Z</span>
+              <LumoraLogo size={63} coreColor="rgb(34 211 238)" orbitColor="rgb(34 211 238)" />
               </div>
               <div className="absolute inset-0 bg-gradient-to-br from-purple-400 via-violet-500 to-blue-500 rounded-xl blur-md opacity-50 -z-10"></div>
             </div>
             <div>
               <span className="text-2xl font-bold bg-gradient-to-r from-purple-400 via-violet-300 to-blue-400 bg-clip-text text-transparent">
-                ZEN MATRIX
+                LUMORA
               </span>
               <div className="text-xs text-purple-300/60 -mt-1">Digital Sanctuary</div>
             </div>

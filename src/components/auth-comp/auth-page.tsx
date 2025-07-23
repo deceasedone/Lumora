@@ -106,7 +106,7 @@ export function AuthPage({ onClose, initialMode = "login" }: AuthPageProps) {
                 <Sparkles className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-white">ZEN MATRIX</h1>
+                <h1 className="text-2xl font-bold text-white">LUMORA</h1>
                 <p className="text-purple-300 text-sm">Digital Sanctuary</p>
               </div>
             </div>

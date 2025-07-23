@@ -5,6 +5,8 @@ import { useEffect, useRef, useState } from "react"
 import Spline from "@splinetool/react-spline"
 import { Button } from "@/components/ui/button"
 import { Play, Pause, Volume2, Sparkles } from "lucide-react"
+import { ParticleConstellation } from "../LumoraInfinityWave"
+import { LumoraLogo } from "../lumora"
 
 function HeroSplineBackground() {
   return (
@@ -83,7 +85,7 @@ function HeroContent({ onGetStarted }: { onGetStarted: () => void }) {
               }
             >
               <Sparkles className="w-4 h-4 mr-2" />
-              Zen Mode
+              Nova Mode
             </Button>
             <Button
               variant={currentTheme === "matrix" ? "default" : "ghost"}
@@ -95,8 +97,16 @@ function HeroContent({ onGetStarted }: { onGetStarted: () => void }) {
                   : "text-blue-300 hover:text-white hover:bg-blue-500/20"
               }
             >
-              <span className="w-4 h-4 mr-2 text-xs font-mono">[M]</span>
-              Matrix Mode
+       <ParticleConstellation
+        size={40}
+        particleColor="#0ff"       // Cyan particles
+        lineColor="#0ff"           // Cyan lines
+        particleCount={5}          // Number of particles (max: 5 based on current layout)
+        animationSpeed={1000}       // Lower is faster
+        className="shadow-lg"
+      />
+
+
             </Button>
           </div>
         </div>
@@ -108,7 +118,7 @@ function HeroContent({ onGetStarted }: { onGetStarted: () => void }) {
             Sanctuary
           </span>
         </h1>
-        <div className="text-sm text-purple-300 opacity-90 mt-4 font-mono">FOCUS \ FLOW \ ZEN \ MATRIX</div>
+        <div className="text-sm text-purple-300 opacity-90 mt-4 font-mono">Focus • Flow • Clarity • Lumora</div>
       </div>
       <div className="w-full lg:w-1/2 pl-0 lg:pl-8 flex flex-col items-start">
         <p className="text-base sm:text-lg opacity-80 mb-6 max-w-md text-gray-300">
@@ -120,11 +130,7 @@ function HeroContent({ onGetStarted }: { onGetStarted: () => void }) {
             className="bg-gradient-to-r from-purple-500 via-violet-500 to-blue-500 text-white font-semibold py-2.5 sm:py-3.5 px-6 sm:px-8 rounded-2xl transition duration-300 hover:scale-105 flex items-center justify-center w-full sm:w-auto shadow-lg shadow-purple-500/25"
           >
             <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-white" />
-            Enter the Matrix
-          </button>
-          <button className="border border-purple-500/50 text-purple-300 hover:bg-purple-500/10 hover:text-white font-semibold py-2.5 sm:py-3.5 px-6 sm:px-8 rounded-2xl transition duration-300 w-full sm:w-auto">
-            <Play className="w-4 h-4 mr-2" />
-            Watch Demo
+            This is LUMORA
           </button>
         </div>
 
@@ -181,16 +187,16 @@ function Navbar({ onAuthClick }: { onAuthClick: (type: "login" | "signup") => vo
     >
       <div className="container mx-auto px-4 py-4 md:px-6 lg:px-8 flex items-center justify-between">
         <div className="flex items-center space-x-6 lg:space-x-8">
-          <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-3">
             <div className="relative">
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-400 via-violet-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/25">
-                <span className="text-white font-bold text-lg">Z</span>
+            <div className="w-13 h-13 bg-gradient-to-br from-purple-400 via-violet-500 to-blue-500 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-500/25">
+            <LumoraLogo size={60} coreColor="rgb(34 211 238)" orbitColor="rgb(34 211 238)" />
               </div>
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-400 via-violet-500 to-blue-500 rounded-xl blur-md opacity-50 -z-10"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-400 via-violet-500 to-blue-500 rounded-2xl blur-md opacity-50 -z-10"></div>
             </div>
             <div>
               <span className="text-xl font-bold bg-gradient-to-r from-purple-400 via-violet-300 to-blue-400 bg-clip-text text-transparent">
-                ZEN MATRIX
+              LUMORA
               </span>
             </div>
           </div>

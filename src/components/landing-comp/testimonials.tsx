@@ -10,7 +10,7 @@ export function Testimonials() {
         handle: "@alexdev",
         avatar: "/placeholder.svg?height=80&width=80",
       },
-      text: "ZEN MATRIX completely revolutionized my coding sessions. The Matrix theme makes me feel like Neo while the focus tools keep me in the zone for hours. My productivity has increased by 300%.",
+      text: "LUMORA completely revolutionized my coding sessions. The Matrix theme makes me feel like Neo while the focus tools keep me in the zone for hours. My productivity has increased by 300%.",
       href: "https://twitter.com/alexdev",
     },
     {
@@ -19,7 +19,7 @@ export function Testimonials() {
         handle: "@mayaux",
         avatar: "/placeholder.svg?height=80&width=80",
       },
-      text: "The aesthetic customization is incredible! I switch between Zen mode for creative work and Matrix mode for technical tasks. The ambient soundscapes are perfectly curated.",
+      text: "The aesthetic customization is incredible! I switch between Nova mode for creative work and Nova mode for technical tasks. The ambient soundscapes are perfectly curated.",
       href: "https://twitter.com/mayaux",
     },
     {
@@ -44,7 +44,7 @@ export function Testimonials() {
         handle: "@davidnomad",
         avatar: "/placeholder.svg?height=80&width=80",
       },
-      text: "Working from cafes worldwide, ZEN MATRIX gives me a consistent, beautiful workspace anywhere. The sonic landscapes mask distractions perfectly.",
+      text: "Working from cafes worldwide, LUMORA gives me a consistent, beautiful workspace anywhere. The sonic landscapes mask distractions perfectly.",
     },
     {
       author: {
@@ -59,7 +59,7 @@ export function Testimonials() {
   return (
     <TestimonialsSection
       title="Loved by Creators Worldwide"
-      description="Join thousands of professionals who've transformed their productivity and found their flow with ZEN MATRIX."
+      description="Join thousands of professionals who've transformed their productivity and found their flow with LUMORA."
       testimonials={testimonials}
     />
   )

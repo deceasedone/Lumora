@@ -44,7 +44,7 @@ const defaultSteps: Step[] = [
     description: "Select your perfect environment - from serene zen gardens to cyberpunk terminals",
     icon: <Sparkles className="w-6 h-6" />,
     details: [
-      "Switch between Zen and Matrix themes instantly",
+      "Switch between Nova, Zen and many more themes instantly",
       "Customize ambient lighting and visual effects",
       "Create personalized workspace environments",
       "Save and share your favorite setups",

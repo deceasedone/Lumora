@@ -3,11 +3,10 @@
 import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Github, Twitter, DiscIcon as Discord, Mail, Moon, Send, Sun, Heart } from "lucide-react"
-
+import { ProductivityLogo } from "../ui/ProductivityLogo"
+import { LumoraLogo } from "../lumora"
 function Footerdemo() {
   const [isDarkMode, setIsDarkMode] = React.useState(true)
 
@@ -30,14 +29,14 @@ function Footerdemo() {
             {/* Brand */}
             <div className="flex items-center space-x-3 mb-6">
               <div className="relative">
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-400 via-violet-500 to-blue-500 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-500/25">
-                  <span className="text-white font-bold text-xl">Z</span>
+                <div className="w-13 h-13 bg-gradient-to-br from-purple-400 via-violet-500 to-blue-500 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-500/25">
+                  <LumoraLogo size={60} coreColor="rgb(34 211 238)" orbitColor="rgb(34 211 238)" />
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-br from-purple-400 via-violet-500 to-blue-500 rounded-2xl blur-md opacity-50 -z-10"></div>
               </div>
               <div>
                 <span className="text-2xl font-bold bg-gradient-to-r from-purple-400 via-violet-300 to-blue-400 bg-clip-text text-transparent">
-                  ZEN MATRIX
+                  LUMORA
                 </span>
                 <div className="text-sm text-purple-300/60 -mt-1">Digital Sanctuary</div>
               </div>
@@ -183,21 +182,12 @@ function Footerdemo() {
                 </Tooltip>
               </TooltipProvider>
             </div>
-
-            <div className="flex items-center space-x-2">
-              <Sun className="h-4 w-4 text-purple-400" />
-              <Switch id="dark-mode" checked={isDarkMode} onCheckedChange={setIsDarkMode} />
-              <Moon className="h-4 w-4 text-purple-400" />
-              <Label htmlFor="dark-mode" className="sr-only">
-                Toggle dark mode
-              </Label>
-            </div>
           </div>
         </div>
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-purple-500/20 pt-8 text-center md:flex-row">
           <div className="flex items-center text-gray-400 text-sm">
-            <span>© 2024 ZEN MATRIX. Made with</span>
+            <span>© 2025 LUMORA. Made with</span>
             <Heart className="w-4 h-4 mx-1 text-purple-400 fill-current" />
             <span>for creators worldwide.</span>
           </div>
