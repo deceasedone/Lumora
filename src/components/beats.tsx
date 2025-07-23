@@ -76,13 +76,7 @@ function BeatCard({ scene, isActive, isLoading, onToggle }: BeatCardProps) {
   )
 }
 
-export function AudioManager({
-  className,
-  label,
-}: {
-  className?: string
-  label?: string
-}) {
+export function AudioManager() {
   const [activeSounds, setActiveSounds] = useState<Set<string>>(new Set())
   const [loadingSounds, setLoadingSounds] = useState<Set<string>>(new Set())
   const [readySounds, setReadySounds] = useState<Set<string>>(new Set())
@@ -138,18 +132,6 @@ export function AudioManager({
   return (
     <div>
       <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
-        <DrawerTrigger asChild>
-          <Button
-            variant={activeSounds.size > 0 ? "default" : "ghost"}
-            size="icon"
-            className={cn(className)}
-          >
-            <AudioLines className="h-4 w-4" />
-            {label?.trim() ? (
-              <p className="text-muted-foreground">{label}</p>
-            ) : null}
-          </Button>
-        </DrawerTrigger>
         <DrawerContent className="flex max-h-[80vh] flex-col">
           <DrawerHeader className="relative flex-shrink-0">
             <DrawerTitle className="text-center text-2xl font-bold">

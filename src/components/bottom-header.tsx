@@ -6,7 +6,8 @@ import { dailyGoalAtom, timerAtom } from "@/context/data"
 import { Progress } from "./ui/progress"
 import { DailyGoalDrawerTrigger } from "./overlay"
 import { RetroVideoPlayer } from "./retro-video-player"
-import { BreathingMeditation } from "./breathing-meditation" // <-- Import the breathing component
+import { BreathingMeditation } from "./breathing-meditation"
+import { ParticleButton } from "./ui/particle-button"
 
 export function BottomHeader() {
   const dailyGoal = useAtomValue(dailyGoalAtom)
@@ -28,10 +29,7 @@ export function BottomHeader() {
 
         {/* 3. Right Side Controls - Star Button + Daily Goal Progress */}
         <div className="flex items-center gap-4 shrink-0">
-          {/* Star Button */}
-          <button className="h-12 w-12 rounded-lg bg-blue-700 hover:bg-blue-800 text-white shadow transition-all flex items-center justify-center text-lg font-bold">
-            ★
-          </button>
+
 
           {/* Daily Goal Progress */}
           {dailyGoal > 0 && (
