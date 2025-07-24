@@ -40,22 +40,7 @@ import "@/styles/themes.css"
 // --- HELPER COMPONENTS WITH GRADIENT STYLE AND CORRECT LOGIC ---
 
 // Motivation Button (shows a toast)
-function GradientMotivationButton() {
-  return (
-    <GradientNavButton title="Motivate" gradientFrom="#a955ff" gradientTo="#ea51ff" onClick={showMotivationToast}>
-      <Zap className="h-4 w-4" />
-    </GradientNavButton>
-  )
-}
 
-// Surprise Me Button (shows a toast)
-function GradientSurpriseMeButton() {
-  return (
-    <GradientNavButton title="Surprise" gradientFrom="#56CCF2" gradientTo="#2F80ED" onClick={showFactToast}>
-      <Shuffle className="h-4 w-4" />
-    </GradientNavButton>
-  )
-}
 
 // Absolute Focus Button (replicates logic from overlay.tsx)
 function GradientAbsoluteFocusButton() {
@@ -250,8 +235,6 @@ export default function DashboardPage() {
           <div className="ml-auto hidden items-center gap-x-4 lg:flex">
             <GradientNavWrapper>
               {/* Use all the new, functional gradient components */}
-              <GradientMotivationButton />
-              <GradientSurpriseMeButton />
               <ImmersiveModeSwitch />
               <GradientAbsoluteFocusButton />
               <GradientAudioManagerButton />

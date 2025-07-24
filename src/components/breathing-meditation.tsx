@@ -10,7 +10,6 @@ export function BreathingMeditation() {
   const [seconds, setSeconds] = useState(0)
   const [cycle, setCycle] = useState(0)
 
-  // Breathing pattern: 4-4-4-4 (inhale-hold-exhale-pause)
   const breathingPattern = {
     inhale: 4,
     hold: 4,
@@ -26,10 +25,10 @@ export function BreathingMeditation() {
   }
 
   const phaseColors = {
-    inhale: "from-blue-400 to-cyan-400",
-    hold: "from-yellow-400 to-orange-400",
-    exhale: "from-green-400 to-emerald-400",
-    pause: "from-purple-400 to-pink-400",
+    inhale: "from-[var(--primary)] to-[var(--accent)]",
+    hold: "from-[var(--secondary)] to-[var(--accent)]",
+    exhale: "from-[var(--accent)] to-[var(--primary)]",
+    pause: "from-[var(--accent)] to-[var(--secondary)]",
   }
 
   useEffect(() => {
@@ -42,7 +41,6 @@ export function BreathingMeditation() {
           const currentPhaseDuration = breathingPattern[phase]
 
           if (newSeconds >= currentPhaseDuration) {
-            // Move to next phase
             if (phase === "inhale") {
               setPhase("hold")
             } else if (phase === "hold") {
@@ -68,17 +66,17 @@ export function BreathingMeditation() {
   const progress = (seconds / breathingPattern[phase]) * 100
 
   return (
-    <div className="w-48 h-48 bg-gradient-to-br from-slate-900 to-slate-800 border-2 border-slate-700 rounded-lg p-3 flex flex-col">
+    <div className="w-36 h-36 bg-gradient-to-br from-[var(--background)] to-[var(--card)] border border-[var(--border)] rounded-lg p-2 flex flex-col">
       {/* Header */}
-      <div className="text-center mb-2">
-        <div className="text-white text-sm font-medium">Breathe</div>
-        <div className="text-slate-400 text-xs">Cycle: {cycle}</div>
+      <div className="text-center mb-1">
+        <div className="text-[var(--foreground)] text-[10px] font-medium">Breathe</div>
+        <div className="text-[var(--muted-foreground)] text-[9px]">Cycle: {cycle}</div>
       </div>
 
       {/* Breathing Circle */}
       <div className="flex-1 flex items-center justify-center relative">
         <div
-          className={`w-16 h-16 rounded-full bg-gradient-to-r ${phaseColors[phase]} transition-all duration-1000 ${
+          className={`w-10 h-10 rounded-full bg-gradient-to-r ${phaseColors[phase]} transition-all duration-1000 ${
             isActive ? "animate-pulse" : ""
           } flex items-center justify-center`}
           style={{
@@ -86,27 +84,27 @@ export function BreathingMeditation() {
             transition: "transform 1s ease-in-out",
           }}
         >
-          <div className="text-white text-center">
-            <div className="text-xs font-semibold">{phaseMessages[phase]}</div>
-            <div className="text-xs opacity-75">{breathingPattern[phase] - seconds}</div>
+          <div className="text-[var(--foreground)] text-center">
+            <div className="text-[10px] font-semibold">{phaseMessages[phase]}</div>
+            <div className="text-[9px] opacity-75">{breathingPattern[phase] - seconds}</div>
           </div>
         </div>
       </div>
 
       {/* Progress Bar */}
-      <div className="w-full bg-slate-700 rounded-full h-1 mb-2">
+      <div className="w-full bg-[var(--muted)] rounded-full h-[3px] mb-1">
         <div
-          className={`h-1 rounded-full bg-gradient-to-r ${phaseColors[phase]} transition-all duration-300`}
+          className={`h-[3px] rounded-full bg-gradient-to-r ${phaseColors[phase]} transition-all duration-300`}
           style={{ width: `${progress}%` }}
         />
       </div>
 
       {/* Controls */}
-      <div className="flex justify-center gap-2">
+      <div className="flex justify-center gap-1">
         <Button
           onClick={() => setIsActive(!isActive)}
-          size="sm"
-          className="bg-blue-600 hover:bg-blue-700 text-white h-6 w-6 p-0"
+          size="icon"
+          className="bg-[var(--primary)] hover:bg-[var(--accent)] text-[var(--primary-foreground)] h-5 w-5 p-0"
         >
           {isActive ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
         </Button>
@@ -118,9 +116,9 @@ export function BreathingMeditation() {
             setSeconds(0)
             setCycle(0)
           }}
-          size="sm"
+          size="icon"
           variant="outline"
-          className="border-slate-600 text-slate-300 hover:bg-slate-700 bg-transparent h-6 w-6 p-0"
+          className="border-[var(--border)] text-[var(--muted-foreground)] hover:bg-[var(--muted)] bg-transparent h-5 w-5 p-0"
         >
           <RotateCcw className="w-3 h-3" />
         </Button>
