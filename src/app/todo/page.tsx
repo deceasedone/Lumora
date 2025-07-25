@@ -185,26 +185,28 @@ export default function TodosPage() {
       {/* Main Content */}
       <main className="grid flex-1 grid-cols-1 gap-6 overflow-y-auto p-6 md:grid-cols-3">
         {/* Calendar */}
-        <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-4 md:col-span-2">
-          <DayPicker
-            mode="single"
-            selected={selectedDay}
-            onSelect={setSelectedDay}
-            modifiers={{ events: eventDays }}
-            modifiersClassNames={{
-              selected: 'rdp-day_selected',
-              today: 'rdp-day_today',
-              events: 'rdp-day_event',
-            }}
-            className="m-auto"
-          />
+        <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-4 md:col-span-2 flex justify-center items-center">
+          <div className="w-full flex justify-center">
+            <DayPicker
+              mode="single"
+              selected={selectedDay}
+              onSelect={setSelectedDay}
+              modifiers={{ events: eventDays }}
+              modifiersClassNames={{
+                selected: 'rdp-day_selected',
+                today: 'rdp-day_today',
+                events: 'rdp-day_event',
+              }}
+              className="m-auto scale-125 md:scale-150" // Increase calendar size
+            />
+          </div>
         </div>
 
         {/* Selected Day's Todos */}
         <div className="flex flex-col gap-4 rounded-lg border border-[var(--border)] bg-[var(--card)] p-4">
           <div className="flex items-center justify-between border-b border-[var(--border)] pb-2">
             <h2 className="text-lg font-semibold">
-              Tasks for {selectedDay ? selectedDay.toLocaleDateString() : "..."}
+              Tasks for {selectedDay ? `${selectedDay.getFullYear()}-${String(selectedDay.getMonth()+1).padStart(2,'0')}-${String(selectedDay.getDate()).padStart(2,'0')}` : "..."}
             </h2>
             <span className="text-sm text-[var(--muted-foreground)]">
               {selectedDayTodos.length} tasks
