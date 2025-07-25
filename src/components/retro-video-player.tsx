@@ -10,12 +10,13 @@ interface RetroVideoPlayerProps {
 }
 
 export function RetroVideoPlayer({
-  src = "/placeholder.mp4",
+  src = "https://cdn.pixabay.com/video/2024/09/01/229254_large.mp4",
   title = "Retro Video",
 }: RetroVideoPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
+  const [hasError, setHasError] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
 
   useEffect(() => {
@@ -53,12 +54,14 @@ export function RetroVideoPlayer({
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {/* Inner Screen */}
+       {/* Inner Screen */}
         <div className="relative h-full w-full rounded border border-[var(--border)] bg-[var(--card)] shadow-inner">
           <div className="relative w-full h-full overflow-hidden rounded">
-            {/* CRT FX */}
+                      {/* CRT FX */}
+          {/*  
             <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-b from-transparent via-[var(--accent)]/5 to-transparent" />
             <div className="pointer-events-none absolute inset-0 z-10 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,var(--accent)_2px,var(--accent)_4px)] opacity-30" />
+*/}
 
             {/* Video Element */}
             <video
@@ -67,13 +70,21 @@ export function RetroVideoPlayer({
               muted
               playsInline
               loop
+              onError={() => setHasError(true)}
             >
               <source src={src} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
 
+            {/* Error Screen */}
+            {hasError && (
+              <div className="absolute inset-0 flex items-center justify-center bg-[var(--background)]">
+                <div className="font-mono text-xs text-red-500">VIDEO FAILED TO LOAD</div>
+              </div>
+            )}
+
             {/* Loading Screen */}
-            {!isLoaded && (
+            {!isLoaded && !hasError && (
               <div className="absolute inset-0 flex items-center justify-center bg-[var(--background)]">
                 <div className="font-mono text-xs text-[var(--accent)] animate-pulse">LOADING...</div>
               </div>
