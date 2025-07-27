@@ -7,17 +7,17 @@ import { useEditor, EditorContent } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 import Placeholder from "@tiptap/extension-placeholder"
 
-import { get, set, del, keys, createStore } from "idb-keyval"
+import { getJournalEntries, createJournalEntry, updateJournalEntry, deleteJournalEntry } from "@/utils/api";
 import DOMPurify from "dompurify"
 
 import { Button } from "@/components/ui/button"
 import { LumoraLogo } from "@/components/lumora"
 import "@/styles/themes.css"
+import { useRouter } from "next/navigation";
 
 // --------------------------------------------------
 // IndexedDB and Type Definitions
 // --------------------------------------------------
-const journalStore = createStore("lumora-journal", "entries")
 
 interface JournalEntry {
   id: string
@@ -354,19 +354,33 @@ function downloadJournalBookPDF(entries: JournalEntry[]): void {
 // The Full Journal Page Component
 // ------------------------------------------------------------------
 export default function JournalPage() {
+  const router = useRouter();
+  useEffect(() => {
+    if (typeof window !== "undefined" && !localStorage.getItem("authToken")) {
+      router.push("/auth");
+    }
+  }, [router]);
+
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const selectedEntry = entries.find(e => e.id === selectedId);
   const [isDownloading, setIsDownloading] = useState(false);
 
-  // Load from IndexedDB on mount
+  // Load from backend on mount
   useEffect(() => {
     async function load() {
-      const ks = await keys(journalStore);
-      const rows = await Promise.all(ks.map(k => get<JournalEntry>(k, journalStore)));
-      const validEntries = rows.filter((entry): entry is JournalEntry => entry !== undefined);
-      setEntries(validEntries.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
-      if (validEntries.length) setSelectedId(validEntries[0].id);
+      try {
+        const backendEntries = await getJournalEntries();
+        setEntries(backendEntries.map((e: any) => ({
+          id: e.id,
+          title: e.title,
+          date: e.created_at ? new Date(e.created_at).toISOString().split("T")[0] : "",
+          content: e.content,
+        })));
+        if (backendEntries.length) setSelectedId(backendEntries[0].id);
+      } catch (e) {
+        setEntries([]);
+      }
     }
     load();
   }, []);
@@ -390,32 +404,47 @@ export default function JournalPage() {
 
   // CRUD operations
   const createEntry = async () => {
-    const newEntry: JournalEntry = {
-      id: crypto.randomUUID(),
-      title: "Untitled Entry",
-      date: new Date().toISOString().split("T")[0],
-      content: "",
-    };
-    await set(newEntry.id, newEntry, journalStore);
-    setEntries(prev => [newEntry, ...prev]);
-    setSelectedId(newEntry.id);
+    try {
+      const newEntry = await createJournalEntry("Untitled Entry", "");
+      setEntries(prev => [
+        {
+          id: newEntry.id,
+          title: newEntry.title,
+          date: newEntry.created_at ? new Date(newEntry.created_at).toISOString().split("T")[0] : "",
+          content: newEntry.content,
+        },
+        ...prev
+      ]);
+      setSelectedId(newEntry.id);
+    } catch (e) {}
   };
 
   const updateEntry = async (fields: Partial<JournalEntry>) => {
     if (!selectedId) return;
     const entry = entries.find(e => e.id === selectedId);
     if (!entry) return;
-    const updated = { ...entry, ...fields };
-    await set(selectedId, updated, journalStore);
-    setEntries(prev => prev.map(e => (e.id === selectedId ? updated : e)));
+    try {
+      const updated = await updateJournalEntry(selectedId, {
+        title: fields.title !== undefined ? fields.title : entry.title,
+        content: fields.content !== undefined ? fields.content : entry.content,
+      });
+      setEntries(prev => prev.map(e => e.id === selectedId ? {
+        ...e,
+        title: updated.title,
+        content: updated.content,
+        date: updated.created_at ? new Date(updated.created_at).toISOString().split("T")[0] : e.date,
+      } : e));
+    } catch (e) {}
   };
 
-  const deleteEntry = async (id: string) => {
+  const deleteEntryHandler = async (id: string) => {
     if (!confirm("Are you sure you want to delete this entry?")) return;
-    await del(id, journalStore);
-    const updatedEntries = entries.filter(e => e.id !== id);
-    setEntries(updatedEntries);
-    setSelectedId(updatedEntries.length ? updatedEntries[0].id : null);
+    try {
+      await deleteJournalEntry(id);
+      const updatedEntries = entries.filter(e => e.id !== id);
+      setEntries(updatedEntries);
+      setSelectedId(updatedEntries.length ? updatedEntries[0].id : null);
+    } catch (e) {}
   };
 
   // Download handlers with loading state
@@ -478,7 +507,7 @@ export default function JournalPage() {
             <div className="flex items-center gap-2 border-b border-[var(--border)] p-4">
               <input value={selectedEntry.title} onChange={e => updateEntry({ title: e.target.value })} className="flex-1 bg-transparent text-lg font-bold outline-none" disabled={isDownloading} />
               <Button onClick={handleDownloadSingle} variant="ghost" size="icon" title="Download PDF" disabled={isDownloading}><Download className="h-5 w-5" /></Button>
-              <Button variant="ghost" size="icon" onClick={() => deleteEntry(selectedEntry.id)} title="Delete" disabled={isDownloading}><Trash2 className="h-5 w-5" /></Button>
+              <Button variant="ghost" size="icon" onClick={() => deleteEntryHandler(selectedEntry.id)} title="Delete" disabled={isDownloading}><Trash2 className="h-5 w-5" /></Button>
             </div>
             <div className="flex-1 overflow-y-auto p-4">
               <EditorContent editor={editor} className="prose prose-sm max-w-none" onBlur={() => updateEntry({ content: editor?.getHTML() || "" })} />

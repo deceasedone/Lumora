@@ -2,12 +2,8 @@
 
 import { useEffect, useState } from "react"
 import { todoInfoAtom, TodosInfo } from "@/context/data"
-import {
-  deleteTodoFromLocalStore,
-  getAllSavedTodosIDB,
-  saveTodoIDB,
-  updateTodoInLocalStore,
-} from "@/utils/idb.util"
+// Import the correct Todo type from your API file
+import { getTodos, createTodo, updateTodo, deleteTodo, Todo as ApiTodo } from "@/utils/api"; 
 import { zodResolver } from "@hookform/resolvers/zod"
 import Link from "next/link"
 import { useSetAtom } from "jotai"
@@ -23,24 +19,13 @@ import { Checkbox } from "./ui/checkbox"
 import { Form, FormControl, FormField, FormItem } from "./ui/form"
 import { Input } from "./ui/input"
 import { ScrollArea } from "./ui/scroll-area"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "./ui/dialog"
 
-export interface TodoItemType {
-  id: string
-  title: string
-  isDone: boolean
-  createdAt: Date
-}
+// FIX 1: Use the single source of truth for the Todo type from your api.ts
+// No need to define a separate TodoItemType here. We'll use ApiTodo directly.
 
-// Form validation schema
+// Form validation schema (renamed for clarity)
 const todoFormSchema = z.object({
-  title: z
+  task: z // FIX 2: Changed from 'title' to 'task' to match the API
     .string()
     .min(1, "Todo cannot be empty")
     .max(200, "Todo must be less than 200 characters")
@@ -50,33 +35,50 @@ const todoFormSchema = z.object({
 type TodoFormValues = z.infer<typeof todoFormSchema>
 
 interface TodoInputProps {
-  onTodoAdded: (todo: TodoItemType) => void
+  onTodoAdded: (task: string) => Promise<void> // Changed from 'title' to 'task'
   searchQuery: string
   onSearchChange: (query: string) => void
 }
 
+const formatDateToUTC_YYYYMMDD = (d: Date): string => {
+  const year = d.getUTCFullYear();
+  const month = String(d.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(d.getUTCDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 
 export function Todo() {
   const setTodoStat = useSetAtom(todoInfoAtom)
-
-  const [todos, setTodos] = useState<TodoItemType[]>([])
+  const [todos, setTodos] = useState<ApiTodo[]>([])
   const [searchQuery, setSearchQuery] = useState<string>("")
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    ;(async () => {
+    (async () => {
+      setLoading(true)
       try {
-        const savedTodos = await getAllSavedTodosIDB()
-        setTodos(savedTodos)
+        const backendTodos = await getTodos();
+        
+        // Use the UTC formatter to get today's date string.
+        // This correctly handles the case where local "today" is different from UTC "today".
+        const todayString = formatDateToUTC_YYYYMMDD(new Date());
+        const todaysTodos = backendTodos.filter(t => t.date === todayString);
+        
+        setTodos(todaysTodos);
+
       } catch (error) {
-        console.error("Failed to load todos:", error)
+        console.error("Dashboard: Failed to fetch todos", error);
+        setTodos([])
       }
+      setLoading(false)
     })()
   }, [])
 
   useEffect(() => {
-    if (!Array.isArray(todos) || todos.length === 0) return
+    if (!Array.isArray(todos)) return;
 
-    const completedTodo = todos.filter((todo) => todo.isDone).length
+    const completedTodo = todos.filter((todo) => todo.completed).length
     const totalTodos = todos.length
 
     const updatedTodoStat: TodosInfo = {
@@ -85,24 +87,44 @@ export function Todo() {
     }
 
     setTodoStat(updatedTodoStat)
-  }, [todos])
+  }, [todos, setTodoStat])
 
   const filteredTodos = todos.filter((todo) =>
-    todo.title.toLowerCase().includes(searchQuery.toLowerCase())
+    todo.task.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
-  const handleTodoAdded = (newTodo: TodoItemType) => {
-    setTodos((prev) => [newTodo, ...prev])
+  const handleTodoAdded = async (task: string) => {
+    try {
+      // Use the UTC formatter when creating a todo from the dashboard.
+      const todayString = formatDateToUTC_YYYYMMDD(new Date());
+      const newTodo = await createTodo(task, todayString);
+      setTodos((prev) => [newTodo, ...prev])
+    } catch (error) {
+      console.error("Dashboard: Failed to add todo", error);
+    }
+  }
+  const handleTodoToggle = async (id: string, isCompleted: boolean) => {
+    try {
+      const todoToUpdate = todos.find((t) => t.id === id);
+      if (!todoToUpdate) return;
+      
+      // We only need to send the 'completed' field, but sending task is fine
+      const updatedTodo = await updateTodo(id, { task: todoToUpdate.task, completed: isCompleted });
+      
+      // Replace the old todo with the updated one from the API
+      setTodos((prev) => prev.map((t) => (t.id === id ? updatedTodo : t)));
+    } catch (error) {
+      console.error("Dashboard: Failed to toggle todo", error);
+    }
   }
 
-  const handleTodoToggle = (id: string, isDone: boolean) => {
-    setTodos((prev) =>
-      prev.map((todo) => (todo.id === id ? { ...todo, isDone } : todo))
-    )
-  }
-
-  const handleTodoDelete = (id: string) => {
-    setTodos((prev) => prev.filter((todo) => todo.id !== id))
+  const handleTodoDelete = async (id: string) => {
+    try {
+      await deleteTodo(id)
+      setTodos((prev) => prev.filter((todo) => todo.id !== id))
+    } catch (error) {
+      console.error("Dashboard: Failed to delete todo", error);
+    }
   }
 
   return (
@@ -111,17 +133,14 @@ export function Todo() {
       <div className="shrink-0 pb-1">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-[var(--foreground)]">
-            Todos
+            Today's Todos
           </h2>
-
-          {/* Link to /todos */}
           <Link href="/todo">
             <Button variant="ghost" size="icon">
               <CalendarIcon className="h-4 w-4 text-[var(--muted-foreground)]" />
             </Button>
           </Link>
         </div>
-
         <TodoInput
           onTodoAdded={handleTodoAdded}
           searchQuery={searchQuery}
@@ -134,7 +153,9 @@ export function Todo() {
         <ScrollArea className="h-full max-h-72 lg:max-h-full">
           <div className="py-2">
             <AnimatePresence mode="wait">
-              {filteredTodos.length === 0 ? (
+              {loading ? (
+                 <div className="text-center text-sm text-[var(--muted-foreground)] py-12">Loading...</div>
+              ) : filteredTodos.length === 0 ? (
                 <motion.div
                   key="empty"
                   initial={{ opacity: 0 }}
@@ -145,20 +166,17 @@ export function Todo() {
                   <div className="text-sm text-[var(--muted-foreground)]">
                     {searchQuery
                       ? "No todos match your search"
-                      : "No todos yet"}
+                      : "No tasks for today!"}
                   </div>
                   {!searchQuery && (
                     <div className="mt-1 text-xs text-[var(--muted-foreground)] opacity-70">
-                      Add one above to get started
+                      Add one above to get started.
                     </div>
                   )}
                 </motion.div>
               ) : (
                 <motion.div
                   key="todo-list"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
                   className="space-y-1"
                 >
                   <AnimatePresence>
@@ -166,8 +184,8 @@ export function Todo() {
                       <TodoItem
                         key={todo.id}
                         id={todo.id}
-                        isDone={todo.isDone}
-                        title={todo.title}
+                        isDone={todo.completed} // Pass 'completed' as 'isDone'
+                        title={todo.task}       // Pass 'task' as 'title'
                         onToggle={handleTodoToggle}
                         onDelete={handleTodoDelete}
                         index={index}
@@ -185,37 +203,24 @@ export function Todo() {
 }
 
 
-function TodoInput({
-  onTodoAdded,
-  searchQuery,
-  onSearchChange,
-}: TodoInputProps) {
+function TodoInput({ onTodoAdded, searchQuery, onSearchChange }: TodoInputProps) {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
   const form = useForm<TodoFormValues>({
     resolver: zodResolver(todoFormSchema),
     defaultValues: {
-      title: "",
+      task: "", // Changed from 'title' to 'task'
     },
   })
 
   const onSubmit = async (values: TodoFormValues) => {
     if (isSubmitting) return
-
     setIsSubmitting(true)
     try {
-      const newTodo: TodoItemType = {
-        id: crypto.randomUUID(),
-        title: values.title,
-        isDone: false,
-        createdAt: new Date(),
-      }
-
-      await saveTodoIDB(newTodo)
-      onTodoAdded(newTodo)
+      await onTodoAdded(values.task) // Pass 'values.task'
       form.reset()
     } catch (error) {
-      console.error("Failed to add todo:", error)
+      // handle error
     } finally {
       setIsSubmitting(false)
     }
@@ -236,23 +241,17 @@ function TodoInput({
             <div className="relative flex-1">
               <FormField
                 control={form.control}
-                name="title"
+                name="task" // Changed from 'title' to 'task'
                 render={({ field }) => (
                   <FormItem className="flex-1">
                     <FormControl>
                       <Input
-                        placeholder="Add a new todo..."
+                        placeholder="Add a new todo for today..."
                         {...field}
                         onKeyDown={handleKeyDown}
                         className={cn(
                           "border-[var(--border)] bg-[var(--input)] text-[var(--foreground)]",
-                          "pr-10 placeholder:text-[var(--muted-foreground)]",
-                          "transition-all duration-200 ease-in-out",
-                          "focus:border-[var(--ring)] focus:bg-[var(--input)] focus:text-[var(--foreground)] focus:ring-1 focus:ring-[var(--ring)]",
-                          "hover:border-[var(--ring)]",
-                          "[&:focus]:text-[var(--foreground)] [&:focus]:placeholder:text-[var(--muted-foreground)]",
-                          form.formState.errors.title &&
-                            "border-[var(--destructive)]"
+                          form.formState.errors.task && "border-[var(--destructive)]" // Changed from title
                         )}
                       />
                     </FormControl>
@@ -261,15 +260,10 @@ function TodoInput({
               />
               <Button
                 type="submit"
-                disabled={isSubmitting || !form.watch("title")?.trim()}
+                disabled={isSubmitting || !form.watch("task")?.trim()} // Changed from title
                 size="sm"
                 variant="ghost"
-                className={cn(
-                  "absolute top-1/2 right-1 h-7 w-7 -translate-y-1/2 p-0",
-                  "text-[var(--muted-foreground)] hover:text-[var(--foreground)]",
-                  "hover:border-[var(--border)] hover:bg-[var(--accent)]",
-                  "transition-all duration-200 ease-in-out"
-                )}
+                className="absolute top-1/2 right-1 h-7 w-7 -translate-y-1/2 p-0"
               >
                 <PlusIcon className="h-4 w-4" />
               </Button>
@@ -285,14 +279,7 @@ function TodoInput({
           placeholder="Search todos..."
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          className={cn(
-            "border-[var(--border)] bg-[var(--input)] text-[var(--foreground)]",
-            "pl-9 placeholder:text-[var(--muted-foreground)]",
-            "transition-all duration-200 ease-in-out",
-            "focus:border-[var(--ring)] focus:bg-[var(--input)] focus:text-[var(--foreground)] focus:ring-1 focus:ring-[var(--ring)]",
-            "hover:border-[var(--ring)]",
-            "[&:focus]:text-[var(--foreground)] [&:focus]:placeholder:text-[var(--muted-foreground)]"
-          )}
+          className="pl-9"
         />
       </div>
     </div>
@@ -304,48 +291,33 @@ interface TodoItemProps {
   isDone: boolean
   title: string
   index: number
-  onToggle: (id: string, isDone: boolean) => void
-  onDelete: (id: string) => void
+  onToggle: (id: string, checked: boolean) => Promise<void>
+  onDelete: (id: string) => Promise<void>
 }
 
-export function TodoItem({
-  id,
-  isDone,
-  title,
-  index,
-  onToggle,
-  onDelete,
-}: TodoItemProps) {
+export function TodoItem({ id, isDone, title, index, onToggle, onDelete }: TodoItemProps) {
   const [isChecked, setIsChecked] = useState(isDone)
   const [isUpdating, setIsUpdating] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
 
   const handleToggle = async (checked: boolean) => {
     if (isUpdating) return
-
     setIsUpdating(true)
     setIsChecked(checked)
-
     try {
-      await updateTodoInLocalStore(id, { isDone: checked })
-      onToggle(id, checked)
+      await onToggle(id, checked)
     } catch (error) {
-      console.error("Failed to update todo:", error)
       setIsChecked(!checked)
     } finally {
       setIsUpdating(false)
     }
   }
-
   const handleDelete = async () => {
     if (isDeleting) return
-
     setIsDeleting(true)
     try {
-      await deleteTodoFromLocalStore(id)
-      onDelete(id)
+      await onDelete(id)
     } catch (error) {
-      console.error("Failed to delete todo:", error)
       setIsDeleting(false)
     }
   }

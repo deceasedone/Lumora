@@ -23,6 +23,8 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 
+import { createJournalEntry } from "@/utils/api";
+
 // --- Store and Type Definitions (Must match other journal files) ---
 const journalStore = createStore("lumora-journal", "entries")
 
@@ -57,29 +59,18 @@ export function Journal() {
 
   const handleSave = async () => {
     if (!editor) return
-
-    // Use editor's text content for the check, but save the HTML
     const contentText = editor.getText()
     if (!title && !contentText) {
       return;
     }
-
     setIsSaving(true)
-
-    const newEntry: JournalEntry = {
-      id: crypto.randomUUID(),
-      title: title || "Untitled Entry",
-      content: editor.getHTML(), // Get rich text HTML from the editor
-      date: new Date().toISOString().split("T")[0],
-    }
-
-    await set(newEntry.id, newEntry, journalStore)
-
-    // Reset the form, including the editor
-    setTitle("")
-    editor.commands.clearContent(true) // Clear editor content and history
+    try {
+      await createJournalEntry(title || "Untitled Entry", editor.getHTML())
+      setTitle("")
+      editor.commands.clearContent(true)
+      setIsOpen(false)
+    } catch (e) {}
     setIsSaving(false)
-    setIsOpen(false)
   }
   
   // Reset form state when the sheet is closed

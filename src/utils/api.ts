@@ -14,10 +14,12 @@ export interface User {
 
 export interface Todo {
   id: string;
-  title: string;
-  isDone: boolean;
-  createdAt: string;
-  userId: string;
+  task: string;
+  completed: boolean;
+  date: string;
+  created_at: string;
+  updated_at: string;
+  user_id: string;
 }
 
 export interface JournalEntry {
@@ -33,11 +35,11 @@ export interface JournalEntry {
 // ==================================
 // A helper function to streamline fetch requests.
 
-async function apiFetch(endpoint: string, options: RequestInit = {}) {
-  const token = localStorage.getItem('authToken'); // We assume the token is stored in localStorage after login
-  const headers = {
+async function apiFetch(endpoint: string, options: RequestInit = {}): Promise<any> {
+  const token = localStorage.getItem('authToken');
+  const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...options.headers,
+    ...(options.headers as Record<string, string>),
   };
 
   if (token) {
@@ -63,19 +65,24 @@ async function apiFetch(endpoint: string, options: RequestInit = {}) {
 // AUTH API
 // ==================================
 // Backend should return: { user: User, token: string }
-export const login = (email, password) => apiFetch('/auth/login', {
+export const login = (email: string, password: string): Promise<{ user: User; token: string }> => apiFetch('/auth/login', {
   method: 'POST',
   body: JSON.stringify({ email, password }),
 });
 
 // Backend should return: { user: User, token: string }
-export const register = (name, email, password) => apiFetch('/auth/register', {
+export const register = (name: string, email: string, password: string): Promise<{ user: User; token: string }> => apiFetch('/auth/register', {
   method: 'POST',
   body: JSON.stringify({ name, email, password }),
 });
 
 // Backend should return: User
-export const getMe = () => apiFetch('/auth/me');
+export const getMe = (): Promise<User> => apiFetch('/auth/me');
+
+export const logout = async (): Promise<void> => {
+  await apiFetch('/auth/logout', { method: 'POST' });
+  localStorage.removeItem('authToken');
+};
 
 
 // ==================================
@@ -85,13 +92,13 @@ export const getMe = () => apiFetch('/auth/me');
 export const getTodos = (): Promise<Todo[]> => apiFetch('/todos');
 
 // Backend should return: Todo (the newly created one)
-export const createTodo = (title: string): Promise<Todo> => apiFetch('/todos', {
+export const createTodo = (task: string, date: string): Promise<Todo> => apiFetch('/todos', {
   method: 'POST',
-  body: JSON.stringify({ title }),
+  body: JSON.stringify({ task, date }),
 });
 
 // Backend should return: Todo (the updated one)
-export const updateTodo = (id: string, updates: Partial<Pick<Todo, 'title' | 'isDone'>>): Promise<Todo> => apiFetch(`/todos/${id}`, {
+export const updateTodo = (id: string, updates: { task?: string; completed?: boolean; date?: string }): Promise<Todo> => apiFetch(`/todos/${id}`, {
   method: 'PUT',
   body: JSON.stringify(updates),
 });

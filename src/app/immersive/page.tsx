@@ -76,6 +76,11 @@ function ClockDisplay() {
 // --- Main Page Component ---
 export default function ImmersivePage() {
   const router = useRouter();
+  useEffect(() => {
+    if (typeof window !== "undefined" && !localStorage.getItem("authToken")) {
+      router.push("/auth");
+    }
+  }, [router]);
 
   // --- State Management ---
   const [currentWallpaper, setCurrentWallpaper] = useState<Wallpaper>(wallpaperData.mySelections[0]);

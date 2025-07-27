@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Eye, EyeOff, Github, Mail, ArrowRight, X, Sparkles, Lock, User, Chrome } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import { login, register } from "@/utils/api";
+import { useRouter } from "next/navigation";
 
 interface AuthPageProps {
   onClose?: () => void
@@ -25,18 +27,44 @@ export function AuthPage({ onClose, initialMode = "login" }: AuthPageProps) {
     firstName: "",
     lastName: "",
   })
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-    setIsLoading(false)
-    console.log("Auth submission:", { mode, formData })
-  }
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+    try {
+      let result;
+      if (mode === "login") {
+        result = await login(formData.email, formData.password);
+      } else {
+        if (formData.password !== formData.confirmPassword) {
+          setError("Passwords do not match");
+          setIsLoading(false);
+          return;
+        }
+        result = await register(
+          formData.firstName + (formData.lastName ? " " + formData.lastName : ""),
+          formData.email,
+          formData.password
+        );
+      }
+      if (result && result.token) {
+        localStorage.setItem("authToken", result.token);
+        router.push("/dashboard");
+      } else {
+        setError("Invalid response from server");
+      }
+    } catch (err: any) {
+      setError(err.message || "Authentication failed");
+    }
+    setIsLoading(false);
+  };
 
   const switchMode = (newMode: "login" | "signup") => {
     setMode(newMode)
@@ -229,6 +257,9 @@ export function AuthPage({ onClose, initialMode = "login" }: AuthPageProps) {
                   onSubmit={handleSubmit}
                   className="space-y-4"
                 >
+                  {error && (
+                    <div className="text-red-500 text-sm mb-2 text-center">{error}</div>
+                  )}
                   {mode === "signup" && (
                     <div className="grid grid-cols-2 gap-4">
                       <div>

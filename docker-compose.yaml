@@ -1,10 +1,28 @@
 version: '3.8'
 
 services:
-  web:
-    build: .
-    ports:
-      - "3000:3000"
+  # --- Add this 'db' service ---
+  db:
+    image: postgres:15 # Use a specific version of the official Postgres image
+    container_name: lumora_db
+    restart: always
     environment:
-      - NODE_ENV=production
-    command: pnpm start
+      # These are the credentials the database will be created with.
+      # You will use these in your backend's .env file.
+      POSTGRES_USER: lumora_user
+      POSTGRES_PASSWORD: Billie13@ # <-- CHANGE THIS to a secure password
+      POSTGRES_DB: lumora_db
+    ports:
+      # This maps your local machine's port 5432 to the container's port 5432.
+      # If you have another Postgres instance running locally, change the first number (e.g., "5433:5432").
+      - "5432:5432"
+    volumes:
+      # This line makes sure your data persists even if you stop/remove the container.
+      - lumora-db-data:/var/lib/postgresql/data
+
+  # You might have other services here for your frontend, etc.
+  # ...
+
+# This defines the named volume we referenced above.
+volumes:
+  lumora-db-data:

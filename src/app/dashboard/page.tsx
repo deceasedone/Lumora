@@ -33,6 +33,8 @@ import { BottomHeader } from "@/components/bottom-header"
 
 // Import IDB utilities for settings dropdown
 import { clearStoreByName, IDB_STORES, STORES } from "@/utils/idb.util"
+import { logout } from "@/utils/api";
+import { useEffect } from "react";
 
 import "@/styles/themes.css"
 
@@ -105,6 +107,12 @@ function GradientUserSettingNavButton() {
     STORES.map(async (store) => storeClearHandler(store))
   }
 
+  const router = useRouter();
+  const handleLogout = async () => {
+    await logout();
+    router.push("/auth");
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -120,21 +128,12 @@ function GradientUserSettingNavButton() {
           </a>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => storeClearHandler("session")}>
-          Clear Stats
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => storeClearHandler("todo")}>
-          Clear Todos
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => storeClearHandler("video")}>
-          Clear Video List
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          className="text-red-500"
-          onClick={handleClearEverything}
-        >
-          Clear Everything
-        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => storeClearHandler("session")}>Clear Stats</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => storeClearHandler("todo")}>Clear Todos</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => storeClearHandler("video")}>Clear Video List</DropdownMenuItem>
+        <DropdownMenuItem className="text-red-500" onClick={handleClearEverything}>Clear Everything</DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem className="text-red-500" onClick={handleLogout}>Logout</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )
@@ -219,6 +218,12 @@ function ImmersiveModeSwitch() {
 
 // --- MAIN DASHBOARD PAGE ---
 export default function DashboardPage() {
+  const router = useRouter();
+  useEffect(() => {
+    if (typeof window !== "undefined" && !localStorage.getItem("authToken")) {
+      router.push("/auth");
+    }
+  }, [router]);
   return (
     <div className="min-h-screen bg-[var(--background)] font-[family-name:var(--font-geist-sans)]">
       {/* These components are controlled by atoms and can be placed at the top level */}
