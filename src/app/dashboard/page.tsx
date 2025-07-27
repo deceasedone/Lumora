@@ -141,7 +141,8 @@ function GradientUserSettingNavButton() {
 
 // Theme Dropdown (uses a DropdownMenu)
 function GradientThemeDropdown() {
-  const { setTheme } = useTheme()
+  const { setTheme, theme: currentTheme } = useTheme()
+  
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -149,42 +150,35 @@ function GradientThemeDropdown() {
           <Palette className="h-4 w-4" />
         </GradientNavButton>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>Light</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>Dark</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dracula")}>Dracula</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("onepiece")}>One Piece</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("naruto")}>Naruto</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("doom-64")}>Doom 64</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("monokai")}>Monokai</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("nord")}>Nord</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("vscode")}>VS Code</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("noctis")}>Noctis</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("cyberpunk")}>Cyberpunk</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("retro")}>Retro</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("lumora")}>Lumora</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("midnight")}>Midnight</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("espresso")}>Espresso</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("forest")}>Forest</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("ocean")}>Ocean</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("sunset")}>Sunset</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("gray")}>Gray</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("lavender")}>Lavender</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("barbie")}>Barbie</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("brutalism")}>Brutalism</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("claymorphism")}>Claymorphism</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("clean slate")}>Clean Slate</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("caffeine")}>Caffeine</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("nature")}>Nature</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("desert-oasis")}>Desert Oasis</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("paper")}>Paper</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("9009")}>9009</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("stealth")}>Stealth</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("tangerine")}>Tangerine</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("q-rose")}>Q Rose</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("amber light")}>Amber Light</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("amber dark")}>Amber Dark</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("bold tech")}>Bold Tech</DropdownMenuItem>
+      <DropdownMenuContent 
+        align="end" 
+        className="w-80 max-h-[70vh] overflow-y-auto p-2"
+        sideOffset={8}
+      >
+        <div className="grid grid-cols-2 gap-1">
+          {themes.map(theme => (
+            <button
+              key={theme}
+              onClick={() => setTheme(theme)}
+              onMouseEnter={() => setTheme(theme)}
+              className={`
+                relative flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium
+                transition-all duration-200 hover:bg-accent hover:text-accent-foreground
+                ${currentTheme === theme ? 'bg-accent text-accent-foreground ring-2 ring-primary' : 'text-muted-foreground'}
+                group cursor-pointer
+              `}
+            >
+              <span className="truncate">
+                {theme.split('-').map(word => 
+                  word.charAt(0).toUpperCase() + word.slice(1)
+                ).join(' ')}
+              </span>
+              {currentTheme === theme && (
+                <div className="absolute right-2 h-2 w-2 rounded-full bg-primary" />
+              )}
+            </button>
+          ))}
+        </div>
       </DropdownMenuContent>
     </DropdownMenu>
   )
@@ -193,6 +187,7 @@ function GradientThemeDropdown() {
 // Import the MinimalToggle component at the top of the file with other imports
 import { MinimalToggle } from "@/components/ui/toggle"
 import { showMotivationToast, showFactToast } from "@/components/popups"
+import { themes } from "@/styles/themes"
 
 // Immersive Mode Switch with MinimalToggle
 function ImmersiveModeSwitch() {
