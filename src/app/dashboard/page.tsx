@@ -95,18 +95,6 @@ function JournalNavButton() {
 // User Settings Button (replicates the DropdownMenu from overlay.tsx)
 function GradientUserSettingNavButton() {
   const [isProfileOpen, setIsProfileOpen] = useState(false)
-  
-  const user = {
-    name: "Gaurav Sinha",
-    email: "gauravsinha@example.com",
-    avatar: "/placeholder-user.jpg",
-  }
-  
-  const stats = {
-    totalFocus: 125 * 3600000, // 125 hours
-    totalSessions: 210,
-    currentStreak: 15,
-  }
 
   const storeClearHandler = async (name: IDB_STORES) => {
     try {
@@ -131,8 +119,6 @@ function GradientUserSettingNavButton() {
       <ProfileModal
         isOpen={isProfileOpen}
         onClose={() => setIsProfileOpen(false)}
-        user={user}
-        stats={stats}
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>

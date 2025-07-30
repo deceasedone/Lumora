@@ -34,10 +34,10 @@ export function BottomHeader() {
             Summon
           </button>
           <div className="flex flex-row gap-2 w-full justify-center">
-            <GradientNavButton title="Motivate" gradientFrom="#a955ff" gradientTo="#ea51ff" onClick={showMotivationToast}>
+            <GradientNavButton title="Motivate" gradientFrom="#a955ff" gradientTo="#ea51ff" onClick={() => showMotivationToast()}>
               <Zap className="h-4 w-4" />
             </GradientNavButton>
-            <GradientNavButton title="Surprise" gradientFrom="#56CCF2" gradientTo="#2F80ED" onClick={showFactToast}>
+            <GradientNavButton title="Surprise" gradientFrom="#56CCF2" gradientTo="#2F80ED" onClick={() => showFactToast()}>
               <Shuffle className="h-4 w-4" />
             </GradientNavButton>
           </div>

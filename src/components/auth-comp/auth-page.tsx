@@ -56,6 +56,7 @@ export function AuthPage({ onClose, initialMode = "login" }: AuthPageProps) {
       }
       if (result && result.token) {
         localStorage.setItem("authToken", result.token);
+        localStorage.setItem("userData", JSON.stringify(result.user));
         router.push("/dashboard");
       } else {
         setError("Invalid response from server");
