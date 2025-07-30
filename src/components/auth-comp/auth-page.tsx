@@ -60,8 +60,9 @@ export function AuthPage({ onClose, initialMode = "login" }: AuthPageProps) {
       } else {
         setError("Invalid response from server");
       }
-    } catch (err: any) {
-      setError(err.message || "Authentication failed");
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Authentication failed';
+      setError(errorMessage);
     }
     setIsLoading(false);
   };
@@ -149,7 +150,7 @@ export function AuthPage({ onClose, initialMode = "login" }: AuthPageProps) {
             </h2>
 
             <p className="text-gray-300 text-lg mb-12 leading-relaxed">
-              Join thousands of creators who've discovered their perfect digital workspace. Where focus meets artistry.
+              Join thousands of creators who&apos;ve discovered their perfect digital workspace. Where focus meets artistry.
             </p>
 
             {/* Features */}

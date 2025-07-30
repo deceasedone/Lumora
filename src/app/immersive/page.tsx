@@ -28,9 +28,50 @@ import { openAmbientDrawerAtom, openJournalAtom } from "@/context/data"
 import { ImmersiveLogo } from "@/components/ImmersiveLogo"
 import { wallpaperData, allWallpapers, type Wallpaper } from "@/lib/wallpaper-data"
 
+// YouTube Player API types as interfaces
+export interface YouTubePlayer {
+  playVideo(): void
+  pauseVideo(): void
+  stopVideo(): void
+  getIframe(): HTMLIFrameElement
+  // Add other methods as needed
+}
+
+export interface YouTubePlayerOptions {
+  height?: string
+  width?: string
+  videoId?: string
+  playerVars?: YouTubePlayerVars
+  events?: YouTubePlayerEvents
+}
+
+export interface YouTubePlayerVars {
+  autoplay?: 0 | 1
+  controls?: 0 | 1
+  disablekb?: 0 | 1
+  enablejsapi?: 0 | 1
+  fs?: 0 | 1
+  iv_load_policy?: 1 | 3
+  loop?: 0 | 1
+  modestbranding?: 0 | 1
+  playsinline?: 0 | 1
+  rel?: 0 | 1
+  showinfo?: 0 | 1
+  [key: string]: string | number | undefined
+}
+
+export interface YouTubePlayerEvents {
+  onReady?: (event: { target: YouTubePlayer }) => void
+  onStateChange?: (event: { data: number; target: YouTubePlayer }) => void
+  onError?: (event: { data: number; target: YouTubePlayer }) => void
+}
+
+// For global window.YT type
 declare global {
   interface Window {
-    YT: any
+    YT: {
+      Player: new (containerId: string, options: YouTubePlayerOptions) => YouTubePlayer
+    }
     onYouTubeIframeAPIReady: () => void
   }
 }
@@ -419,7 +460,7 @@ export default function ImmersivePage() {
   const [isJournalOpen, setJournalOpen] = useAtom(openJournalAtom)
   const [isAmbientDrawerOpen, setAmbientDrawerOpen] = useAtom(openAmbientDrawerAtom)
   const [isWallpaperModalOpen, setIsWallpaperModalOpen] = useState(false)
-  const [youTubePlayer, setYouTubePlayer] = useState<any>(null)
+  const [youTubePlayer, setYouTubePlayer] = useState<YouTubePlayer | null>(null)
   const [isApiReady, setIsApiReady] = useState(false)
 
   useEffect(() => {
@@ -482,21 +523,23 @@ export default function ImmersivePage() {
     return <div className="w-screen h-screen bg-black" /> // Or a loading spinner
   }
 
-  const handleYouTubeReady = (event: any) => {
+  const handleYouTubeReady = (event: { target: YouTubePlayer }) => {
     console.log("YouTube player ready:", event.target)
-    setYouTubePlayer(event.target)
+    const player = event.target
+    setYouTubePlayer(player)
     try {
-      event.target.playVideo()
+      player.playVideo()
       // Unmute after a short delay to ensure autoplay works
       setTimeout(() => {
-        event.target.unMute()
+              // @ts-expect-error - unMute exists on the player but not in the type definitions
+        player.unMute && player.unMute()
       }, 1000)
     } catch (error) {
       console.error("Error playing video:", error)
     }
   }
 
-  const handleYouTubeStateChange = (event: any) => {
+  const handleYouTubeStateChange = (event: { data: number; target: YouTubePlayer }) => {
     console.log("YouTube state change:", event.data)
     // If video ends, replay it (0 = ended state)
     if (event.data === 0) {
@@ -504,8 +547,8 @@ export default function ImmersivePage() {
     }
   }
 
-  const handleYouTubeError = (error: any) => {
-    console.error("YouTube player error:", error)
+  const handleYouTubeError = (event: { data: number }) => {
+    console.error("YouTube player error:", event.data)
   }
 
   return (

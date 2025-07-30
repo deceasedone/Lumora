@@ -35,7 +35,7 @@ export interface JournalEntry {
 // ==================================
 // A helper function to streamline fetch requests.
 
-async function apiFetch(endpoint: string, options: RequestInit = {}): Promise<any> {
+async function apiFetch<T = void>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const token = localStorage.getItem('authToken');
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ async function apiFetch(endpoint: string, options: RequestInit = {}): Promise<an
 
   // Handle responses that don't have content (e.g., DELETE requests)
   if (response.status === 204) {
-    return null;
+    return undefined as unknown as T; // Type-safe way to handle no-content responses
   }
 
   return response.json();

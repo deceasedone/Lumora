@@ -61,7 +61,7 @@ export function Player({ hidden = false }: { hidden?: boolean }) {
               }}
               config={{
                 youtube: {
-                  // @ts-ignore
+                  // @ts-expect-error
                   playerVars: {
                     autoplay: 1,
                     disablekb: 0,

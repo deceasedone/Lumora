@@ -40,7 +40,7 @@ export default function NotFound() {
           
           <div className="bg-[var(--card)]/50 backdrop-blur-sm border border-[var(--border)]/30 rounded-2xl p-8 mx-auto max-w-2xl">
             <h2 className="text-lg font-medium text-[var(--card-foreground)] mb-4">
-              Let's restore your focus together
+              Let&apos;s restore your focus together
             </h2>
             <p className="text-[var(--muted-foreground)] leading-relaxed">
               This page may not exist, but your journey to mindful productivity continues. 
@@ -87,9 +87,9 @@ export default function NotFound() {
         {/* Wisdom quote */}
         <div className="border-t border-[var(--border)]/30 pt-8">
           <blockquote className="text-[var(--muted-foreground)] italic text-lg mb-3 font-light">
-            "In the midst of movement and chaos, keep stillness inside of you."
+            &ldquo;In the midst of movement and chaos, keep stillness inside of you.&rdquo;
           </blockquote>
-          <cite className="text-sm text-[var(--muted-foreground)]/70">— Deepak Chopra</cite>
+          <cite className="text-sm text-[var(--muted-foreground)]/70">&mdash; Deepak Chopra</cite>
         </div>
       </div>
     </div>

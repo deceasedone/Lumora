@@ -26,6 +26,13 @@ interface JournalEntry {
   content: string // HTML content from Tiptap
 }
 
+interface ApiJournalEntry {
+  id: string
+  title: string
+  created_at: string
+  content: string
+}
+
 // ------------------------------------------------------------------
 // PDF Generation: Browser Print-Based with Clean Formatting
 // ------------------------------------------------------------------
@@ -46,7 +53,7 @@ function htmlToFormattedText(html: string): string {
       const tagName = element.tagName.toLowerCase();
       
       // Process child nodes first
-      for (let child of node.childNodes) {
+      for (const child of node.childNodes) {
         text += processNode(child);
       }
       
@@ -371,14 +378,18 @@ export default function JournalPage() {
     async function load() {
       try {
         const backendEntries = await getJournalEntries();
-        setEntries(backendEntries.map((e: any) => ({
+        // Safely cast the response to ApiJournalEntry[]
+        const apiEntries = backendEntries as unknown as ApiJournalEntry[];
+        const journalEntries: JournalEntry[] = apiEntries.map(e => ({
           id: e.id,
           title: e.title,
           date: e.created_at ? new Date(e.created_at).toISOString().split("T")[0] : "",
           content: e.content,
-        })));
-        if (backendEntries.length) setSelectedId(backendEntries[0].id);
-      } catch (e) {
+        }));
+        setEntries(journalEntries);
+        if (apiEntries.length) setSelectedId(apiEntries[0].id);
+      } catch (error) {
+        console.error("Failed to load journal entries:", error);
         setEntries([]);
       }
     }
@@ -406,45 +417,64 @@ export default function JournalPage() {
   const createEntry = async () => {
     try {
       const newEntry = await createJournalEntry("Untitled Entry", "");
-      setEntries(prev => [
-        {
-          id: newEntry.id,
-          title: newEntry.title,
-          date: newEntry.created_at ? new Date(newEntry.created_at).toISOString().split("T")[0] : "",
-          content: newEntry.content,
-        },
-        ...prev
-      ]);
-      setSelectedId(newEntry.id);
-    } catch (e) {}
+      // Safely cast the response to ApiJournalEntry
+      const apiEntry = newEntry as unknown as ApiJournalEntry;
+      const newJournalEntry: JournalEntry = {
+        id: apiEntry.id,
+        title: apiEntry.title,
+        date: apiEntry.created_at ? new Date(apiEntry.created_at).toISOString().split("T")[0] : "",
+        content: apiEntry.content,
+      };
+      
+      setEntries(prev => [newJournalEntry, ...prev]);
+      setSelectedId(apiEntry.id);
+    } catch (error) {
+      console.error('Failed to create journal entry:', error);
+    }
   };
 
   const updateEntry = async (fields: Partial<JournalEntry>) => {
     if (!selectedId) return;
     const entry = entries.find(e => e.id === selectedId);
     if (!entry) return;
+    
     try {
       const updated = await updateJournalEntry(selectedId, {
-        title: fields.title !== undefined ? fields.title : entry.title,
-        content: fields.content !== undefined ? fields.content : entry.content,
-      });
-      setEntries(prev => prev.map(e => e.id === selectedId ? {
-        ...e,
-        title: updated.title,
-        content: updated.content,
-        date: updated.created_at ? new Date(updated.created_at).toISOString().split("T")[0] : e.date,
-      } : e));
-    } catch (e) {}
+        title: fields.title ?? entry.title,
+        content: fields.content ?? entry.content,
+      }) as unknown as ApiJournalEntry;
+      
+      setEntries(prev => 
+        prev.map(e => e.id === selectedId 
+          ? {
+              ...e,
+              title: updated.title,
+              content: updated.content,
+              date: updated.created_at ? new Date(updated.created_at).toISOString().split("T")[0] : e.date,
+            } 
+          : e
+        )
+      );
+    } catch (error) {
+      console.error('Failed to update journal entry:', error);
+    }
   };
 
   const deleteEntryHandler = async (id: string) => {
     if (!confirm("Are you sure you want to delete this entry?")) return;
     try {
       await deleteJournalEntry(id);
-      const updatedEntries = entries.filter(e => e.id !== id);
-      setEntries(updatedEntries);
-      setSelectedId(updatedEntries.length ? updatedEntries[0].id : null);
-    } catch (e) {}
+      setEntries(prev => {
+        const updatedEntries = prev.filter(entry => entry.id !== id);
+        // If we deleted the selected entry, select the first available one or null
+        if (id === selectedId) {
+          setSelectedId(updatedEntries[0]?.id ?? null);
+        }
+        return updatedEntries;
+      });
+    } catch (error) {
+      console.error('Failed to delete journal entry:', error);
+    }
   };
 
   // Download handlers with loading state

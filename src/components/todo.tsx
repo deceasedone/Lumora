@@ -133,7 +133,7 @@ export function Todo() {
       <div className="shrink-0 pb-1">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-[var(--foreground)]">
-            Today's Todos
+            Today&apos;s Todos
           </h2>
           <Link href="/todo">
             <Button variant="ghost" size="icon">

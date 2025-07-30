@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { ChevronLeft, Clock, Flame, TrendingUp } from "lucide-react"
 import { motion, useInView } from "framer-motion"
 import { useRef } from "react"
@@ -43,17 +44,7 @@ const containerVariants = {
   },
 }
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-      ease: "easeOut",
-    },
-  },
-}
+// Animation variants used in the component
 
 const cardVariants = {
   hidden: { opacity: 0, scale: 0.9 },
@@ -157,10 +148,13 @@ export default function ProfilePage() {
             whileHover={{ scale: 1.1, rotate: 5 }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
           >
-            <img
+            <Image
               src={user.avatar || "/placeholder.svg"}
               alt="User Avatar"
-              className="h-24 w-24 rounded-full border-2 border-[var(--primary)]"
+              width={96}
+              height={96}
+              className="h-24 w-24 rounded-full border-2 border-[var(--primary)] object-cover"
+              priority
             />
           </motion.div>
           <motion.div
@@ -270,7 +264,7 @@ export default function ProfilePage() {
             transition={{ delay: 1, duration: 0.5 }}
             className="mb-6 text-lg font-semibold"
           >
-            This Week's Focus
+            This Week&apos;s Focus
           </motion.h3>
           <div className="flex h-64 items-end justify-between gap-2 text-center">
             {weeklyStats.map((stat, index) => (

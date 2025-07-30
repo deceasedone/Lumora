@@ -4,11 +4,10 @@ import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { Github, Twitter, DiscIcon as Discord, Mail, Moon, Send, Sun, Heart } from "lucide-react"
-import { ProductivityLogo } from "../ui/ProductivityLogo"
+import { Github, Twitter, DiscIcon as Discord, Mail, Send, Heart } from "lucide-react"
 import { LumoraLogo } from "../lumora"
 function Footerdemo() {
-  const [isDarkMode, setIsDarkMode] = React.useState(true)
+  const [isDarkMode] = React.useState(true)
 
   React.useEffect(() => {
     if (isDarkMode) {

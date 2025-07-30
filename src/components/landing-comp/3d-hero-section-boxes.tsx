@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from "react"
 import Spline from "@splinetool/react-spline"
 import { Button } from "@/components/ui/button"
 import { Play, Pause, Volume2, Sparkles } from "lucide-react"
-import { ParticleConstellation } from "../LumoraInfinityWave"
 import { LumoraLogo } from "../lumora"
 
 function HeroSplineBackground() {
@@ -66,7 +65,6 @@ function ScreenshotSection({ screenshotRef }: { screenshotRef: React.RefObject<H
 
 function HeroContent({ onGetStarted }: { onGetStarted: () => void }) {
   const [isPlaying, setIsPlaying] = useState(false)
-  const [currentTheme, setCurrentTheme] = useState<"zen" | "matrix">("zen")
 
   return (
     <div className="text-white px-4 max-w-screen-xl mx-auto w-full flex flex-col lg:flex-row justify-between items-start lg:items-center py-16">

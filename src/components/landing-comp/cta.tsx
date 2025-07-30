@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Sparkles, Zap, Star } from "lucide-react"
+import { ArrowRight, Sparkles, Zap } from "lucide-react"
 import { Boxes } from "@/components/landing-comp/background-boxes"
 import { cn } from "@/lib/utils"
 

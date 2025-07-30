@@ -1,14 +1,13 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { useCallback } from "react" // <-- Import useCallback for focus mode logic
+import { useCallback } from "react"
 import { useAtom, useSetAtom } from "jotai"
 import { useTheme } from "next-themes"
-import { BookText, Zap, Shuffle, Focus, Volume2, Settings, Palette, User } from "lucide-react"
+import { BookText, Focus, Volume2, Settings, Palette, User } from "lucide-react"
 
 // Import UI components for popups and dropdowns
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog" // <-- For Surprise Me button
 
 // Import application components and atoms
 import { AudioManager } from "@/components/beats" // <-- We need to render this component for it to work
@@ -18,7 +17,6 @@ import { Player } from "@/components/player"
 import { Stopwatch } from "@/components/stopwatch"
 import { Todo } from "@/components/todo"
 import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
 import { LumoraLogo } from "@/components/lumora"
 import { GradientNavButton} from "@/components/ui/gradient-nav-button"
 import { GradientNavWrapper } from "@/components/ui/gradient-nav-wrapper"
@@ -187,7 +185,7 @@ function GradientThemeDropdown() {
 
 // Import the MinimalToggle component at the top of the file with other imports
 import { MinimalToggle } from "@/components/ui/toggle"
-import { showMotivationToast, showFactToast } from "@/components/popups"
+
 import { themes } from "@/styles/themes"
 
 // Immersive Mode Switch with MinimalToggle
