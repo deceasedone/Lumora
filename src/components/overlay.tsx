@@ -291,8 +291,6 @@ export function UserSettingNavButton({
       <ProfilePopup
         isOpen={isProfileOpen}
         onClose={() => setIsProfileOpen(false)}
-        user={user}
-        stats={stats}
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
