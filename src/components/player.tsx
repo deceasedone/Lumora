@@ -61,10 +61,15 @@ export function Player({ hidden = false }: { hidden?: boolean }) {
               }}
               config={{
                 youtube: {
-                  disablekb: 0,
-                  rel: 0,
-                  fs: 1,
-                  iv_load_policy: 3,
+                  // @ts-ignore
+                  playerVars: {
+                    autoplay: 1,
+                    disablekb: 0,
+                    rel: 0,
+                    fs: 1,
+                    iv_load_policy: 3,
+                    host: 'https://www.youtube-nocookie.com',
+                  },
                 },
               }}
             />
