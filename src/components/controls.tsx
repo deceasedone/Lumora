@@ -50,22 +50,23 @@ export function PlayerControls() {
 
   const handleChannelChange = (direction: "next" | "prev") => {
     const currentIndex = allVideosList.findIndex(
-      (video) => video.url === currentlyPlayingMedia
+      (video) => video.url === currentlyPlayingMedia?.src
     )
-    if (currentIndex === -1) {
-      setCurrentlyPlayingMedia(allVideosList[0].url)
-      return
-    }
+
     let nextIndex = 0
-    if (direction === "next")
+
+    if (currentIndex === -1) {
+      nextIndex = 0
+    } else if (direction === "next") {
       nextIndex =
         currentIndex === allVideosList.length - 1 ? 0 : currentIndex + 1
-    else
+    } else {
       nextIndex =
         currentIndex === 0 ? allVideosList.length - 1 : currentIndex - 1
+    }
 
-    const nextVideo = allVideosList[nextIndex].url
-    setCurrentlyPlayingMedia(nextVideo)
+    const nextVideo = allVideosList[nextIndex]
+    setCurrentlyPlayingMedia({ type: "video", src: nextVideo.url })
   }
 
   const handleVolumeChange = (direction: "up" | "down") => {

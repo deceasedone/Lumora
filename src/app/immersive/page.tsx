@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react"
 import YouTube from "react-youtube"
 import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
-import { useAtom } from "jotai"
+import { useAtom, useAtomValue } from "jotai"
 import {
   AudioLines,
   BookText,
@@ -24,7 +24,7 @@ import { Journal } from "@/components/journal"
 import { AudioManager } from "@/components/beats"
 import { Todo } from "@/components/todo"
 import { Stopwatch } from "@/components/stopwatch"
-import { openAmbientDrawerAtom, openJournalAtom } from "@/context/data"
+import { openAmbientDrawerAtom, openJournalAtom, showAbsoluteFocusAtom } from "@/context/data"
 import { ImmersiveLogo } from "@/components/ImmersiveLogo"
 import { wallpaperData, allWallpapers, type Wallpaper } from "@/lib/wallpaper-data"
 
@@ -114,6 +114,7 @@ const MySelectionIcon = ({ className = "" }: { className?: string }) => (
 // --- Clock Component ---
 function ClockDisplay() {
   const [time, setTime] = useState("")
+  const isAbsFocusMode = useAtomValue(showAbsoluteFocusAtom)
 
   const updateTime = useCallback(() => {
     setTime(new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }))
@@ -124,6 +125,11 @@ function ClockDisplay() {
     updateTime() // Initial call
     return () => clearInterval(interval)
   }, [updateTime])
+
+  // Hide clock when focus mode is active
+  if (isAbsFocusMode) {
+    return null
+  }
 
   return (
     <div
@@ -457,10 +463,10 @@ export default function ImmersivePage() {
   )
   const [isToolbarOpen, setIsToolbarOpen] = useState(false)
   const [isClient, setIsClient] = useState(false)
-  const [isJournalOpen, setJournalOpen] = useAtom(openJournalAtom)
+  const [, setJournalOpen] = useAtom(openJournalAtom)
   const [isAmbientDrawerOpen, setAmbientDrawerOpen] = useAtom(openAmbientDrawerAtom)
   const [isWallpaperModalOpen, setIsWallpaperModalOpen] = useState(false)
-  const [youTubePlayer, setYouTubePlayer] = useState<YouTubePlayer | null>(null)
+  const [, setYouTubePlayer] = useState<YouTubePlayer | null>(null)
   const [isApiReady, setIsApiReady] = useState(false)
 
   useEffect(() => {
@@ -478,7 +484,12 @@ export default function ImmersivePage() {
       const scriptTag = document.createElement("script")
       scriptTag.src = "https://www.youtube.com/iframe_api"
       document.head.appendChild(scriptTag)
-      ;(window as any).onYouTubeIframeAPIReady = () => {
+      // Use type assertion to handle window.YT
+      const globalWindow = window as unknown as {
+        onYouTubeIframeAPIReady: () => void;
+        YT: unknown;
+      };
+      globalWindow.onYouTubeIframeAPIReady = () => {
         setIsApiReady(true)
       }
     }
@@ -491,7 +502,7 @@ export default function ImmersivePage() {
 
     if (currentWallpaper.type === "youtube") {
       console.log("YouTube video ID:", currentWallpaper.id)
-      console.log("YouTube API loaded:", typeof window !== "undefined" && (window as any).YT)
+      console.log("YouTube API loaded:", typeof window !== "undefined" && window.YT)
     }
   }, [currentWallpaper])
 
@@ -531,8 +542,11 @@ export default function ImmersivePage() {
       player.playVideo()
       // Unmute after a short delay to ensure autoplay works
       setTimeout(() => {
-              // @ts-expect-error - unMute exists on the player but not in the type definitions
-        player.unMute && player.unMute()
+        // Use type assertion to access unMute method
+        const playerWithMute = player as YouTubePlayer & { unMute?: () => void };
+        if (playerWithMute.unMute) {
+          playerWithMute.unMute();
+        }
       }, 1000)
     } catch (error) {
       console.error("Error playing video:", error)

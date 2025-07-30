@@ -23,7 +23,10 @@ export const MediaProgressAtom = atom<number>(0)
 
 export const AllVideosListAtom = atom<VideoItem[]>(LOFI_CHANNELS)
 
-export const CurrentlyPlayingMediaAtom = atom<string>(LOFI_CHANNELS[0].url)
+export const CurrentlyPlayingMediaAtom = atom<{
+  type: "lofi" | "video"
+  src: string
+} | null>({ type: "lofi", src: LOFI_CHANNELS[0].url })
 
 export const dailyGoalAtom = atom<number>(2 * ONE_HOUR)
 

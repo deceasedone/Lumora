@@ -1,32 +1,46 @@
 export type VideoItem = {
+  id: string
   title: string
   url: string
+  author: string
 }
 
 export const LOFI_CHANNELS: VideoItem[] = [
   {
-    title: "Lofi Girl",
+    id: "jfKfPfyJRdk",
+    title: "lofi hip hop radio - beats to relax/study to",
     url: "https://www.youtube.com/watch?v=jfKfPfyJRdk",
+    author: "Lofi Girl",
   },
   {
-    title: "Synthwave Radio",
+    id: "rUxyKA_-grg",
+    title: "lofi hip hop radio - beats to sleep/chill to",
+    url: "https://www.youtube.com/watch?v=rUxyKA_-grg",
+    author: "Lofi Girl",
+  },
+  {
+    id: "4xDzrJKXOOY",
+    title: "24/7 lofi hip hop radio - beats to study/relax/game to",
     url: "https://www.youtube.com/watch?v=4xDzrJKXOOY",
+    author: "the bootleg boy",
   },
   {
-    title: "Chillhop Radio",
-    url: "https://www.youtube.com/watch?v=5yx6BWlEVcY",
+    id: "lP26UCnoH9s",
+    title: "coffee shop radio // 24/7 lofi hip-hop beats",
+    url: "https://www.youtube.com/watch?v=lP26UCnoH9s",
+    author: "STEEZYASFUCK",
   },
   {
-    title: "Space Ambient",
-    url: "https://www.youtube.com/watch?v=tNkZsRW7h2c",
+    id: "1-xGerv5FOk",
+    title: "Lofi Music for Studying, Relaxing, and Gaming",
+    url: "https://www.youtube.com/watch?v=1-xGerv5FOk",
+    author: "Monoman",
   },
   {
-    title: "Lofi Hip-Hop: Chilledhop",
-    url: "https://www.youtube.com/watch?v=7NOSDKb0HlU",
-  },
-  {
-    title: "Interstellar Soft",
-    url: "https://www.youtube.com/watch?v=p2zMXSXhZ9M",
+    id: "zFhfksjf_mY",
+    title: "Japanese Lofi Radio 24/7 - lofi hip hop beats to relax/study to",
+    url: "https://www.youtube.com/watch?v=zFhfksjf_mY",
+    author: "Tokyo LosT Tracks",
   },
 ]
 

@@ -23,6 +23,9 @@ export function Player({ hidden = false }: { hidden?: boolean }) {
   const setVideoProgress = useSetAtom(MediaProgressAtom)
   const [isMediaPlaying, setIsMediaPlaying] = useAtom(isMediaPlayingAtom)
 
+  if (!currentChannel) {
+    return null
+  }
   return (
     <>
       <div className="flex h-full min-h-0 flex-col gap-2 md:gap-3">
@@ -36,7 +39,7 @@ export function Player({ hidden = false }: { hidden?: boolean }) {
             <ReactPlayer
               loop
               style={{ borderRadius: "var(--radius)", overflow: "hidden" }}
-              src={currentChannel}
+              src={currentChannel.src}
               width="100%"
               height="100%"
               controls={false}
@@ -61,7 +64,9 @@ export function Player({ hidden = false }: { hidden?: boolean }) {
               }}
               config={{
                 youtube: {
-                  // @ts-expect-error
+                  // @ts-expect-error - The YouTube playerVars type is not fully compatible with the react-player types
+                  // This error is expected because the YouTube playerVars type is not fully compatible with the react-player types.
+                  // The react-player library does not provide a comprehensive type definition for YouTube playerVars.
                   playerVars: {
                     autoplay: 1,
                     disablekb: 0,

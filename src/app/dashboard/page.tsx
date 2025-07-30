@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { useCallback } from "react"
+import { useCallback, useState } from "react"
 import { useAtom, useSetAtom } from "jotai"
 import { useTheme } from "next-themes"
 import { BookText, Focus, Volume2, Settings, Palette, User } from "lucide-react"
@@ -12,7 +12,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 // Import application components and atoms
 import { AudioManager } from "@/components/beats" // <-- We need to render this component for it to work
 import { Journal } from "@/components/journal"
-import { AbsoluteFocusOverlay, MobileNavbar, PomoBreakOverlay } from "@/components/overlay" // <-- Assuming UserSettings can be a standalone content component
+import { AbsoluteFocusOverlay, MobileNavbar } from "@/components/overlay" // <-- Assuming UserSettings can be a standalone content component
+import { ProfileModal } from "@/components/profile-modal"
 import { Player } from "@/components/player"
 import { Stopwatch } from "@/components/stopwatch"
 import { Todo } from "@/components/todo"
@@ -93,6 +94,20 @@ function JournalNavButton() {
 
 // User Settings Button (replicates the DropdownMenu from overlay.tsx)
 function GradientUserSettingNavButton() {
+  const [isProfileOpen, setIsProfileOpen] = useState(false)
+  
+  const user = {
+    name: "Gaurav Sinha",
+    email: "gauravsinha@example.com",
+    avatar: "/placeholder-user.jpg",
+  }
+  
+  const stats = {
+    totalFocus: 125 * 3600000, // 125 hours
+    totalSessions: 210,
+    currentStreak: 15,
+  }
+
   const storeClearHandler = async (name: IDB_STORES) => {
     try {
       await clearStoreByName(name)
@@ -112,28 +127,32 @@ function GradientUserSettingNavButton() {
   };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <GradientNavButton title="Settings" gradientFrom="#FFD700" gradientTo="#FFA500">
-          <Settings className="h-4 w-4" />
-        </GradientNavButton>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuItem asChild>
-          <a href="/profile" className="flex items-center gap-2">
-            <User className="h-4 w-4" />
-            Profile
-          </a>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => storeClearHandler("session")}>Clear Stats</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => storeClearHandler("todo")}>Clear Todos</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => storeClearHandler("video")}>Clear Video List</DropdownMenuItem>
-        <DropdownMenuItem className="text-red-500" onClick={handleClearEverything}>Clear Everything</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem className="text-red-500" onClick={handleLogout}>Logout</DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      <ProfileModal
+        isOpen={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
+        user={user}
+        stats={stats}
+      />
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <GradientNavButton title="Settings" gradientFrom="#FFD700" gradientTo="#FFA500">
+            <Settings className="h-4 w-4" />
+          </GradientNavButton>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-56 bg-[var(--card)] text-[var(--card-foreground)] border-[var(--border)]">
+          <DropdownMenuItem onSelect={() => setIsProfileOpen(true)}>
+            <User className="mr-2 h-4 w-4" />
+            <span>Profile</span>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => storeClearHandler("video")}>Clear Video List</DropdownMenuItem>
+          <DropdownMenuItem className="text-red-500" onClick={handleClearEverything}>Clear Everything</DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem className="text-red-500" onClick={handleLogout}>Logout</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
   )
 }
 
@@ -221,7 +240,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-[var(--background)] font-[family-name:var(--font-geist-sans)]">
       {/* These components are controlled by atoms and can be placed at the top level */}
-      <PomoBreakOverlay />
+      
       <AbsoluteFocusOverlay />
       <Journal />
       <AudioManager />

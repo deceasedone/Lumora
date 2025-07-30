@@ -6,7 +6,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Eye, EyeOff, Github, Mail, ArrowRight, X, Sparkles, Lock, User, Chrome } from "lucide-react"
+import { Eye, EyeOff, Mail, ArrowRight, X, Sparkles, Lock, User } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { login, register } from "@/utils/api";
 import { useRouter } from "next/navigation";
@@ -225,27 +225,7 @@ export function AuthPage({ onClose, initialMode = "login" }: AuthPageProps) {
                 </p>
               </div>
 
-              {/* Social Login */}
-              <div className="space-y-3 mb-6">
-                <button className="w-full h-12 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl flex items-center justify-center text-white transition-all duration-200 group">
-                  <Github className="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" />
-                  Continue with GitHub
-                </button>
-                <button className="w-full h-12 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl flex items-center justify-center text-white transition-all duration-200 group">
-                  <Chrome className="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" />
-                  Continue with Google
-                </button>
-              </div>
 
-              {/* Divider */}
-              <div className="relative mb-6">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-white/20" />
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-black text-gray-400">or</span>
-                </div>
-              </div>
 
               {/* Form */}
               <AnimatePresence mode="wait">

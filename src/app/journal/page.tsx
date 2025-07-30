@@ -37,50 +37,7 @@ interface ApiJournalEntry {
 // PDF Generation: Browser Print-Based with Clean Formatting
 // ------------------------------------------------------------------
 
-/**
- * Convert HTML content to formatted text while preserving formatting
- */
-function htmlToFormattedText(html: string): string {
-  const tempDiv = document.createElement('div');
-  tempDiv.innerHTML = html;
-  
-  const processNode = (node: Node): string => {
-    if (node.nodeType === Node.TEXT_NODE) {
-      return node.textContent || '';
-    } else if (node.nodeType === Node.ELEMENT_NODE) {
-      let text = '';
-      const element = node as Element;
-      const tagName = element.tagName.toLowerCase();
-      
-      // Process child nodes first
-      for (const child of node.childNodes) {
-        text += processNode(child);
-      }
-      
-      // Add formatting markers based on tags
-      switch (tagName) {
-        case 'b':
-        case 'strong':
-          return `**${text}**`;
-        case 'i':
-        case 'em':
-          return `*${text}*`;
-        case 'u':
-          return `_${text}_`;
-        case 'div':
-        case 'p':
-          return text + '\n';
-        case 'br':
-          return '\n';
-        default:
-          return text;
-      }
-    }
-    return '';
-  };
-  
-  return processNode(tempDiv).trim();
-}
+// PDF generation uses browser's print functionality with sanitized HTML content
 
 /**
  * Generate PDF using browser's print functionality

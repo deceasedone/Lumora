@@ -49,7 +49,8 @@ export default function TodosPage() {
       try {
         const backendTodos = await getTodos();
         setTodos(backendTodos);
-      } catch (e) {
+      } catch (error) {
+        console.error('Failed to fetch todos:', error);
         setTodos([]);
       }
       setLoading(false);
@@ -81,7 +82,9 @@ export default function TodosPage() {
       setTodos(prev => [newTodo, ...prev]);
       setNewTodoText("");
       setShowAddForm(false);
-    } catch (e) {}
+    } catch (error) {
+      console.error('Error adding todo:', error);
+    }
   }
 
   // No changes needed in toggle/save/delete, they correctly pass the date string.
@@ -91,7 +94,9 @@ export default function TodosPage() {
     try {
       const updated = await updateTodo(id, { completed: !todo.completed, date: todo.date });
       setTodos(prev => prev.map(t => (t.id === id ? updated : t)));
-    } catch (e) {}
+    } catch (error) {
+      console.error('Error toggling todo:', error);
+    }
   }
 
   const saveEdit = async (id: string) => {
@@ -102,12 +107,21 @@ export default function TodosPage() {
       setTodos(prev => prev.map(t => (t.id === id ? updated : t)));
       setEditingTodo(null);
       setEditText("");
-    } catch (e) {}
+    } catch (error) {
+      console.error('Error saving todo:', error);
+    }
   }
   
   const startEditing = (todo: Todo) => { setEditingTodo(todo.id); setEditText(todo.task); }
   const cancelEdit = () => { setEditingTodo(null); setEditText(""); }
-  const deleteTodoHandler = async (id: string) => { try { await deleteTodo(id); setTodos(prev => prev.filter(t => t.id !== id)); } catch (e) {} }
+  const deleteTodoHandler = async (id: string) => { 
+    try { 
+      await deleteTodo(id); 
+      setTodos(prev => prev.filter(t => t.id !== id)); 
+    } catch (error) {
+      console.error('Error deleting todo:', error);
+    } 
+  }
   const handleKeyPress = (e: React.KeyboardEvent, action: () => void) => { if (e.key === 'Enter') action() }
 
   return (

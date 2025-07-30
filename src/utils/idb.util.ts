@@ -4,7 +4,7 @@ import { VideoItem } from "@/data/lofi"
 import { IDBPDatabase, openDB } from "idb"
 
 import { SessionData } from "@/components/stopwatch"
-import { TodoItemType } from "@/components/todo"
+import { Todo } from "@/utils/api"
 
 const DB_NAME = "lofi"
 const DB_VERSION = 1
@@ -156,7 +156,7 @@ export async function getSavedSessionDataIDB(): Promise<SessionData[]> {
   }
 }
 
-export async function getAllSavedTodosIDB(): Promise<TodoItemType[]> {
+export async function getAllSavedTodosIDB(): Promise<Todo[]> {
   try {
     const db = await getDB()
     const tx = db.transaction("todo", "readonly")
@@ -173,7 +173,7 @@ export async function getAllSavedTodosIDB(): Promise<TodoItemType[]> {
   }
 }
 
-export async function saveTodoIDB(data: TodoItemType): Promise<void> {
+export async function saveTodoIDB(data: Todo): Promise<void> {
   try {
     const db = await getDB()
     const tx = db.transaction("todo", "readwrite")
@@ -192,14 +192,14 @@ export async function saveTodoIDB(data: TodoItemType): Promise<void> {
 // Update a specific todo item
 export async function updateTodoInLocalStore(
   todoId: string,
-  updates: Partial<Pick<TodoItemType, "title" | "isDone">>
+  updates: Partial<Pick<Todo, "task" | "completed">>
 ): Promise<void> {
   try {
     const db = await getDB()
     const tx = db.transaction("todo", "readwrite")
     const storeObj = tx.objectStore("todo")
 
-    const existing = (await storeObj.get("items")) as TodoItemType[] | undefined
+    const existing = (await storeObj.get("items")) as Todo[] | undefined
     if (!Array.isArray(existing)) {
       throw new Error("No todos found")
     }
@@ -231,7 +231,7 @@ export async function deleteTodoFromLocalStore(todoId: string): Promise<void> {
     const tx = db.transaction("todo", "readwrite")
     const storeObj = tx.objectStore("todo")
 
-    const existing = (await storeObj.get("items")) as TodoItemType[] | undefined
+    const existing = (await storeObj.get("items")) as Todo[] | undefined
     if (!Array.isArray(existing)) {
       throw new Error("No todos found")
     }
