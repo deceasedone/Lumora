@@ -5,7 +5,10 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: "http://localhost:3001/api/:path*",
+        // In development, this proxies requests to your backend server
+      // to avoid CORS issues. In production, your hosting environment
+      // (like Vercel or Netlify) should handle this.
+      destination: `${process.env.NEXT_PUBLIC_API_URL}/api/:path*`,
       },
     ];
   },

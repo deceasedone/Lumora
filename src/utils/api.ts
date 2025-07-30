@@ -46,9 +46,11 @@ async function apiFetch<T = void>(endpoint: string, options: RequestInit = {}): 
     headers['Authorization'] = `Bearer ${token}`;
   }
 
+  // ✅ Correctly prefix with the full backend URL
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? '';
   let response;
   try {
-    response = await fetch(`/api${endpoint}`, { ...options, headers });
+    response = await fetch(`${baseUrl}${endpoint}`, { ...options, headers });
   } catch (networkError) {
     console.error('Network error:', networkError);
     throw new Error('Network error: Could not reach the server.');
@@ -70,13 +72,13 @@ async function apiFetch<T = void>(endpoint: string, options: RequestInit = {}): 
     throw new Error(errorData.message || `API request failed: ${response.status} ${response.statusText}`);
   }
 
-  // Handle responses that don't have content (e.g., DELETE requests)
   if (response.status === 204) {
-    return undefined as unknown as T; // Type-safe way to handle no-content responses
+    return undefined as unknown as T;
   }
 
   return response.json();
 }
+
 
 // ==================================
 // AUTH API
