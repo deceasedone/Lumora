@@ -132,6 +132,15 @@
   transition: filter 0.3s ease;
 }
 
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee var(--duration, 40s) linear infinite;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

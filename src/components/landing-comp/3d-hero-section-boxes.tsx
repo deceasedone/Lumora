@@ -54,7 +54,7 @@ function ScreenshotSection({ screenshotRef }: { screenshotRef: React.RefObject<H
       >
         <div>
           <img
-            src="/placeholder.svg?height=600&width=1200"
+            src="/dashboardpic.png"
             alt="Lumora Dashboard Preview"
             className="w-full h-auto block rounded-lg mx-auto"
           />
@@ -71,43 +71,11 @@ function HeroContent({ onGetStarted }: { onGetStarted: () => void }) {
   return (
     <div className="text-white px-4 max-w-screen-xl mx-auto w-full flex flex-col lg:flex-row justify-between items-start lg:items-center py-16">
       <div className="w-full lg:w-1/2 pr-0 lg:pr-8 mb-8 lg:mb-0">
-        {/* Theme Switcher */}
+        {/* Theme Switcher - Only Nova Mode with background */}
         <div className="mb-8 flex justify-start">
-          <div className="bg-black/40 backdrop-blur-xl rounded-full p-1.5 border border-purple-500/30 shadow-2xl shadow-purple-500/10">
-            <Button
-              variant={currentTheme === "zen" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => setCurrentTheme("zen")}
-              className={
-                currentTheme === "zen"
-                  ? "bg-gradient-to-r from-purple-500 to-violet-500 text-white shadow-lg"
-                  : "text-purple-300 hover:text-white hover:bg-purple-500/20"
-              }
-            >
-              <Sparkles className="w-4 h-4 mr-2" />
-              Nova Mode
-            </Button>
-            <Button
-              variant={currentTheme === "matrix" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => setCurrentTheme("matrix")}
-              className={
-                currentTheme === "matrix"
-                  ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg"
-                  : "text-blue-300 hover:text-white hover:bg-blue-500/20"
-              }
-            >
-       <ParticleConstellation
-        size={40}
-        particleColor="#0ff"       // Cyan particles
-        lineColor="#0ff"           // Cyan lines
-        particleCount={5}          // Number of particles (max: 5 based on current layout)
-        animationSpeed={1000}       // Lower is faster
-        className="shadow-lg"
-      />
-
-
-            </Button>
+          <div className="bg-gradient-to-r from-purple-500 to-blue-500 rounded-full px-6 py-2 flex items-center gap-2 shadow-lg shadow-purple-500/25 border border-white/20" style={{ display: 'grid', gridAutoFlow: 'column', alignItems: 'center' }}>
+            <Sparkles className="w-4 h-4 text-white" />
+            <span className="text-white font-semibold">Nova Mode</span>
           </div>
         </div>
 

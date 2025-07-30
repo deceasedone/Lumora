@@ -46,11 +46,28 @@ async function apiFetch(endpoint: string, options: RequestInit = {}): Promise<an
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const response = await fetch(`/api${endpoint}`, { ...options, headers });
+  let response;
+  try {
+    response = await fetch(`/api${endpoint}`, { ...options, headers });
+  } catch (networkError) {
+    console.error('Network error:', networkError);
+    throw new Error('Network error: Could not reach the server.');
+  }
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({ message: 'An unknown error occurred' }));
-    throw new Error(errorData.message || 'API request failed');
+    let errorData;
+    try {
+      errorData = await response.json();
+    } catch {
+      errorData = { message: response.statusText || 'An unknown error occurred' };
+    }
+    console.error('API Error:', {
+      endpoint,
+      status: response.status,
+      statusText: response.statusText,
+      errorData,
+    });
+    throw new Error(errorData.message || `API request failed: ${response.status} ${response.statusText}`);
   }
 
   // Handle responses that don't have content (e.g., DELETE requests)

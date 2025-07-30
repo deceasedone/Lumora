@@ -157,14 +157,15 @@ function GradientThemeDropdown() {
       >
         <div className="grid grid-cols-2 gap-1">
           {themes.map(theme => (
-            <button
+            <DropdownMenuItem
               key={theme}
               onClick={() => setTheme(theme)}
-              onMouseEnter={() => setTheme(theme)}
+              onMouseEnter={() => setTheme(theme)} // <-- Restore hover-to-preview functionality
               className={`
                 relative flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium
                 transition-all duration-200 hover:bg-accent hover:text-accent-foreground
                 ${currentTheme === theme ? 'bg-accent text-accent-foreground ring-2 ring-primary' : 'text-muted-foreground'}
+                focus:bg-accent focus:text-accent-foreground
                 group cursor-pointer
               `}
             >
@@ -176,7 +177,7 @@ function GradientThemeDropdown() {
               {currentTheme === theme && (
                 <div className="absolute right-2 h-2 w-2 rounded-full bg-primary" />
               )}
-            </button>
+            </DropdownMenuItem>
           ))}
         </div>
       </DropdownMenuContent>
