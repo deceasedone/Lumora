@@ -2,7 +2,7 @@
 
 import { useAtomValue } from "jotai"
 import { dailyGoalAtom, timerAtom } from "@/context/data"
-
+import { useRouter } from "next/navigation"
 import { Progress } from "./ui/progress"
 import { DailyGoalDrawerTrigger } from "./overlay"
 import { RetroVideoPlayer } from "./retro-video-player"
@@ -14,6 +14,7 @@ import { showMotivationToast, showFactToast } from "./popups"
 export function BottomHeader() {
   const dailyGoal = useAtomValue(dailyGoalAtom)
   const timer = useAtomValue(timerAtom)
+  const router = useRouter()
   const progress = dailyGoal > 0 ? Math.min((timer / dailyGoal) * 100, 100) : 0
 
   return (
@@ -46,8 +47,7 @@ export function BottomHeader() {
         <div className="flex items-center ml-5">
           <button
             className="w-16 h-16 rounded-lg bg-[var(--primary)] text-[var(--primary-foreground)] font-semibold shadow-lg transition-all duration-200 border-2 border-[var(--border)] hover:scale-105 hover:border-[var(--accent)] hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/60 focus:ring-offset-2 flex flex-col items-center justify-center gap-1"
-            onClick={() => alert('Lobby feature will be implemented after MVP')}
-            title="Lobby (Coming Soon)"
+            onClick={() => router.push('/lobby')}
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
               <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z" />

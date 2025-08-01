@@ -46,6 +46,8 @@ import {
 } from "@/utils/idb.util"
 
 import { Button } from "@/components/ui/button"
+import { SheetTitle } from "@/components/ui/sheet"
+import Link from "next/link"
 import {
   Drawer,
   DrawerClose,
@@ -266,16 +268,6 @@ export function UserSettingNavButton({
   label?: string
 }) {
   const [isProfileOpen, setIsProfileOpen] = useState(false)
-  const user = {
-    name: "Gaurav Sinha",
-    email: "gauravsinha@example.com",
-    avatar: "./images.jpeg",
-  }
-  const stats = {
-    totalFocus: 125 * 3600000, // 125 hours
-    totalSessions: 210,
-    currentStreak: 15,
-  }
 
   const storeClearHandler = async (name: IDB_STORES) => {
     try {
@@ -465,11 +457,19 @@ export function AllVideoPanel() {
           return
         }
 
+        const response = await fetch(
+          `https://www.youtube.com/oembed?url=${data.url}&format=json`
+        )
+        if (!response.ok) {
+          throw new Error("Failed to fetch video details")
+        }
+        const details = await response.json()
+
         const newVideo = {
           id: crypto.randomUUID(),
-          ...data,
-          title: "YouTube Video",
-          author: "YouTube",
+          url: data.url,
+          title: details.title || "YouTube Video",
+          author: details.author_name || "YouTube",
         }
         await updateVideoList(newVideo)
         setVideos((prev) => [...prev, newVideo])
@@ -477,7 +477,8 @@ export function AllVideoPanel() {
         form.reset()
         setIsOpen(false)
       } catch (error) {
-        toast.error("Failed to add video")
+        console.error(error)
+        toast.error("Failed to add video. Please check the URL and try again.")
       }
     }
 
@@ -536,16 +537,12 @@ export function AllVideoPanel() {
         </Button>
       </SheetTrigger>
       <SheetContent className="flex flex-col gap-4 !max-w-md p-0">
+        {/* Accessibility: SheetTitle for screen readers and visible heading */}
+        <SheetTitle className="mt-2 ml-4">Video Library</SheetTitle>
         <div className="flex items-center justify-between border-b p-4">
           <div className="flex items-center gap-3">
             <VideoIcon className="h-5 w-5" />
-            <h2 className="text-lg font-semibold">Video Library</h2>
           </div>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <XIcon className="h-4 w-4" />
-            </Button>
-          </SheetTrigger>
         </div>
 
         <div className="flex flex-col gap-4 px-4">
@@ -566,12 +563,12 @@ export function AllVideoPanel() {
           </div>
         </div>
 
-        <ScrollArea className="flex-1 px-4">
+        <ScrollArea className="flex-1 px-4 min-h-0 overflow-auto">
           <div className="flex flex-col gap-2 pb-4">
             {filteredVideos.length > 0 ? (
               filteredVideos.map((video) => (
                 <div
-                  key={video.id}
+                  key={video.id + '-' + video.url}
                   className="flex items-center justify-between gap-2 rounded-lg border p-2"
                 >
                   <div
@@ -700,6 +697,9 @@ export function BottomHeader() {
       <div className="flex items-center gap-2">
         <AbsoluteFocusButton />
         <UserSettingNavButton />
+        <Link href="/lobby">
+          <Button variant="outline">Lobby</Button>
+        </Link>
       </div>
     </div>
   )
