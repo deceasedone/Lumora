@@ -1,57 +1,58 @@
 import type React from "react"
 import { cn } from "@/lib/utils"
-import { Timer, CheckSquare, BookOpen, Palette, Music, Users, Brain, Zap } from "lucide-react"
+import { Timer, LayoutDashboard, Cat, Palette, Music, Users, Brain, Zap, PlaySquare } from "lucide-react"
 
 export function FeaturesSectionWithHoverEffects() {
   const features = [
     {
-      title: "Pomodoro Mastery",
+      title: "Live Focus Rooms",
       description:
-        "Advanced focus sessions with customizable intervals and productivity analytics that adapt to your natural rhythm.",
-      icon: <Timer className="w-6 h-6" />,
-    },
-    {
-      title: "Intelligent Tasks",
-      description:
-        "AI-powered task prioritization with smart scheduling and seamless integration with your focus sessions.",
-      icon: <CheckSquare className="w-6 h-6" />,
-    },
-    {
-      title: "Mindful Journaling",
-      description:
-        "Capture insights with markdown support, mood tracking, and AI-powered reflection prompts that help you grow.",
-      icon: <BookOpen className="w-6 h-6" />,
-    },
-    {
-      title: "Sonic Landscapes",
-      description: "Curated audio experiences with binaural beats, nature sounds, and focus-enhancing frequencies.",
-      icon: <Music className="w-6 h-6" />,
-    },
-    {
-      title: "Reality Themes",
-      description:
-        "Transform your workspace with immersive themes - from minimalist zen gardens to cyberpunk terminals.",
-      icon: <Palette className="w-6 h-6" />,
-    },
-    {
-      title: "Focus Tribes",
-      description:
-        "Join synchronized study sessions, share accountability with peers, and build lasting productivity habits.",
+        "Join collaborative sessions with synchronized timers and YouTube playback, enabling real-time chat, voice calls, and screen sharing.",
       icon: <Users className="w-6 h-6" />,
     },
     {
-      title: "AI Companion",
+      title: "Dynamic Focus Timer",
       description:
-        "Your personal productivity coach that learns your patterns and suggests optimizations for peak performance.",
-      icon: <Brain className="w-6 h-6" />,
+        "Stay on task with a customizable Pomodoro timer that seamlessly integrates with your personal dashboard and live focus rooms.",
+      icon: <Timer className="w-6 h-6" />,
     },
     {
-      title: "Flow States",
+      title: "Virtual Companion",
       description:
-        "Enter deep work modes with distraction blocking, ambient lighting cues, and neuroplasticity-based focus training.",
+        "A virtual companion that roams your screen, providing a delightful and engaging presence to accompany you during your work sessions.",
+      icon: <Cat className="w-6 h-6" />,
+    },
+    {
+      title: "Unified Productivity Suite",
+      description:
+        "Manage your tasks, calendar, and journal with powerful, integrated tools for streamlined organization and self-reflection.",
+      icon: <LayoutDashboard className="w-6 h-6" />,
+    },
+    {
+      title: "Immersive Themes",
+      description:
+        "Personalize your workspace with a wide selection of dynamic themes, from calm zen gardens to futuristic cyberpunk aesthetics.",
+      icon: <Palette className="w-6 h-6" />,
+    },
+    {
+      title: "Ambient Soundscapes",
+      description:
+        "Enhance your concentration with a curated library of ambient soundscapes, binaural beats, and focus-enhancing frequencies.",
+      icon: <Music className="w-6 h-6" />,
+    },
+    {
+      title: "Full-Screen Focus Mode",
+      description:
+        "Enter a distraction-free, full-screen environment with live wallpapers and dynamic timers to achieve peak concentration.",
       icon: <Zap className="w-6 h-6" />,
     },
-  ]
+    {
+      title: "Synchronized Media Player",
+      description:
+        "A shared video player that allows everyone in a live room to watch and listen to content together, perfectly in sync.",
+      icon: <PlaySquare className="w-6 h-6" />,
+    },
+  ];
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 relative z-10 py-10 max-w-7xl mx-auto">
