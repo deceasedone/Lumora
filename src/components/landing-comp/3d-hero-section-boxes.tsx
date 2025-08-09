@@ -2,6 +2,7 @@
 import React from "react"
 import { useEffect, useRef, useState, Suspense } from "react"
 import dynamic from "next/dynamic"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Play, Pause, Volume2, Sparkles } from "lucide-react"
 import { LumoraLogo } from "../lumora"
@@ -65,7 +66,7 @@ const HeroSplineBackground = React.memo(function HeroSplineBackground() {
 
     const loadWhenIdle = () => {
       // requestIdleCallback fallback
-      const ric: any = (window as any).requestIdleCallback
+      const ric = (window as Window & { requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number }).requestIdleCallback;
       if (typeof ric === "function") {
         ric(() => setShouldLoad(true), { timeout: 1500 })
       } else {
@@ -113,7 +114,7 @@ function HeroSplineLoader() {
 // These components are wrapped in React.memo to prevent re-rendering
 // unless their props change.
 
-const ScreenshotSection = React.memo(({ screenshotRef }: { screenshotRef: React.RefObject<HTMLDivElement | null> }) => {
+const ScreenshotSection = React.memo(function ScreenshotSection({ screenshotRef }: { screenshotRef: React.RefObject<HTMLDivElement | null> }) {
   return (
     <section className="relative z-10 container mx-auto px-4 md:px-6 lg:px-8 mt-11 md:mt-12">
       <div
@@ -121,12 +122,13 @@ const ScreenshotSection = React.memo(({ screenshotRef }: { screenshotRef: React.
         className="bg-gray-900/80 backdrop-blur-xl rounded-xl overflow-hidden shadow-2xl border border-purple-500/30 w-full md:w-[80%] lg:w-[70%] mx-auto"
       >
         <div>
-          <img
+          <Image
             src="/dashboardpic.png"
             alt="Lumora Dashboard Preview"
+            width={1200}
+            height={800}
             className="w-full h-auto block rounded-lg mx-auto"
-            loading="lazy"
-            decoding="async"
+            priority={false} 
           />
         </div>
       </div>
@@ -134,7 +136,7 @@ const ScreenshotSection = React.memo(({ screenshotRef }: { screenshotRef: React.
   )
 })
 
-const HeroContent = React.memo(({ onGetStarted }: { onGetStarted: () => void }) => {
+const HeroContent = React.memo(function HeroContent({ onGetStarted }: { onGetStarted: () => void }) {
   const [isPlaying, setIsPlaying] = useState(false)
 
   return (
@@ -206,7 +208,7 @@ const HeroContent = React.memo(({ onGetStarted }: { onGetStarted: () => void }) 
   )
 })
 
-const Navbar = React.memo(({ onAuthClick }: { onAuthClick: (type: "login" | "signup") => void }) => {
+const Navbar = React.memo(function Navbar({ onAuthClick }: { onAuthClick: (type: "login" | "signup") => void }) {
   return (
     <nav
       className="fixed top-0 left-0 right-0 z-20"
