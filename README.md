@@ -1,3 +1,7 @@
+--------
+Revamping and updating the project
+--------
+
 # Lumora ✨
 
 <div align="center">
