@@ -142,12 +142,6 @@ const HeroContent = React.memo(function HeroContent({ onGetStarted }: { onGetSta
   return (
     <div className="text-white px-4 max-w-screen-xl mx-auto w-full flex flex-col lg:flex-row justify-between items-start lg:items-center py-16">
       <div className="w-full lg:w-1/2 pr-0 lg:pr-8 mb-8 lg:mb-0">
-        <div className="mb-8 flex justify-start">
-          <div className="bg-gradient-to-r from-purple-500 to-blue-500 rounded-full px-6 py-2 flex items-center gap-2 shadow-lg shadow-purple-500/25 border border-white/20" style={{ display: 'grid', gridAutoFlow: 'column', alignItems: 'center' }}>
-            <Sparkles className="w-4 h-4 text-white" />
-            <span className="text-white font-semibold">Nova Mode</span>
-          </div>
-        </div>
         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 leading-tight tracking-wide bg-gradient-to-br from-white via-purple-200 to-violet-300 bg-clip-text text-transparent">
           Your Digital
           <br />

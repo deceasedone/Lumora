@@ -6,8 +6,20 @@ import { Input } from "@/components/ui/input"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Github, Twitter, DiscIcon as Discord, Mail, Send, Heart } from "lucide-react"
 import { LumoraLogo } from "../lumora"
-function Footerdemo() {
+interface FooterdemoProps {
+  onSubscribe?: (email: string) => void
+}
+
+function Footerdemo({ onSubscribe }: FooterdemoProps) {
   const [isDarkMode] = React.useState(true)
+  const [email, setEmail] = React.useState("")
+
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (email.trim()) {
+      onSubscribe?.(email.trim())
+    }
+  }
 
   React.useEffect(() => {
     if (isDarkMode) {
@@ -46,11 +58,14 @@ function Footerdemo() {
               meets artistry.
             </p>
 
-            <form className="relative">
+            <form className="relative" onSubmit={handleSubscribe}>
               <Input
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 className="pr-12 backdrop-blur-sm bg-black/50 border-purple-500/30 text-white focus:border-purple-500 focus:ring-purple-500/20"
+                required
               />
               <Button
                 type="submit"

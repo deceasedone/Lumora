@@ -13,6 +13,7 @@ import { BrowserWarningPopup } from "@/components/landing-comp/browser-warning-p
 export default function LandingPage() {
   const [authModal, setAuthModal] = useState<"login" | "signup" | null>(null)
   const [showWarning, setShowWarning] = useState(false)
+  const [prefillEmail, setPrefillEmail] = useState("")
 
   useEffect(() => {
     // Show warning popup on initial load
@@ -34,11 +35,17 @@ export default function LandingPage() {
       <HowItWorks />
       <Testimonials />
       <CTA onGetStarted={() => setAuthModal("signup")} />
-      <Footer />
+      <Footer
+        onSubscribe={(email) => {
+          setPrefillEmail(email)
+          setAuthModal("signup")
+        }}
+      />
 
       {authModal && (
         <AuthModalSimple
           type={authModal}
+          initialEmail={prefillEmail}
           onClose={() => setAuthModal(null)}
           onSwitchType={(type) => setAuthModal(type)}
         />

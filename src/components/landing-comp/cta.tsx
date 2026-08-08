@@ -56,22 +56,7 @@ export const CTA = React.memo(function CTA({ onGetStarted }: CTAProps) {
             </Button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto relative z-20">
-            <div className="text-center">
-              <div className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-violet-400 bg-clip-text text-transparent mb-2">50K+</div>
-              <div className="text-gray-400">Active Users</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold bg-gradient-to-r from-violet-400 to-blue-400 bg-clip-text text-transparent mb-2">99.9%</div>
-              <div className="text-gray-400">Uptime</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mb-2">4.9★</div>
-              <div className="text-gray-400">User Rating</div>
-            </div>
-          </div>
-
-          <div className="mt-12 text-sm text-gray-500 relative z-20">
+          <div className="mt-4 text-sm text-gray-500 relative z-20">
             <p>✨ No credit card required • 🚀 Setup in 60 seconds • 🔒 Your data stays private</p>
           </div>
         </div>

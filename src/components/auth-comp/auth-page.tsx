@@ -14,14 +14,15 @@ import { useRouter } from "next/navigation";
 interface AuthPageProps {
   onClose?: () => void
   initialMode?: "login" | "signup"
+  initialEmail?: string
 }
 
-export function AuthPage({ onClose, initialMode = "login" }: AuthPageProps) {
+export function AuthPage({ onClose, initialMode = "login", initialEmail = "" }: AuthPageProps) {
   const [mode, setMode] = useState<"login" | "signup">(initialMode)
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
-    email: "",
+    email: initialEmail,
     password: "",
     confirmPassword: "",
     firstName: "",
@@ -70,13 +71,13 @@ export function AuthPage({ onClose, initialMode = "login" }: AuthPageProps) {
 
   const switchMode = (newMode: "login" | "signup") => {
     setMode(newMode)
-    setFormData({
-      email: "",
+    setFormData((prev) => ({
+      email: prev.email,
       password: "",
       confirmPassword: "",
       firstName: "",
       lastName: "",
-    })
+    }))
   }
 
   return (
@@ -114,7 +115,7 @@ export function AuthPage({ onClose, initialMode = "login" }: AuthPageProps) {
       {onClose && (
         <button
           onClick={onClose}
-          className="absolute top-6 right-6 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-all duration-200"
+          className="absolute top-6 right-6 z-30 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-all duration-200"
         >
           <X className="w-5 h-5" />
         </button>
@@ -156,7 +157,7 @@ export function AuthPage({ onClose, initialMode = "login" }: AuthPageProps) {
 
             {/* Features */}
             <div className="space-y-4">
-              {["⚡ Setup in under 60 seconds", "🔒 Bank-level security", "👥 Team collaboration tools"].map(
+              {["⚡ Focus timer, journal & to-dos in one place", "🎧 Ambient sounds & immersive focus mode", "🤝 Shared focus rooms with friends"].map(
                 (feature, index) => (
                   <motion.div
                     key={index}
@@ -202,7 +203,7 @@ export function AuthPage({ onClose, initialMode = "login" }: AuthPageProps) {
             </div>
 
             {/* Auth Card */}
-            <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 shadow-2xl max-h-[80vh] lg:max-h-[90vh] overflow-y-auto">
+            <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 shadow-2xl">
               {/* Header */}
               <div className="text-center mb-8">
                 <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -382,7 +383,7 @@ export function AuthPage({ onClose, initialMode = "login" }: AuthPageProps) {
                 <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center mr-3">
                   <Sparkles className="w-4 h-4 text-white" />
                 </div>
-                <span className="text-lg font-bold text-white">ZEN MATRIX</span>
+                <span className="text-lg font-bold text-white">LUMORA</span>
               </div>
             </div>
           </motion.div>
