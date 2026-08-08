@@ -13,6 +13,8 @@ export interface TodosInfo {
   total: number
 }
 
+export const allTodosAtom = atom<import("@/utils/api").Todo[]>([])
+
 const ONE_HOUR = 60 * 60 * 1000
 
 export const playerVolumeAtom = atom<number[]>([50])

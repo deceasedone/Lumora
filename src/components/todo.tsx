@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { todoInfoAtom, TodosInfo } from "@/context/data"
+import { allTodosAtom, todoInfoAtom, TodosInfo } from "@/context/data"
 // Import the correct Todo type from your API file
 import { getTodos, createTodo, updateTodo, deleteTodo, Todo as ApiTodo } from "@/utils/api"; 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -50,6 +50,7 @@ const formatDateToUTC_YYYYMMDD = (d: Date): string => {
 
 export function Todo() {
   const setTodoStat = useSetAtom(todoInfoAtom)
+  const setAllTodos = useSetAtom(allTodosAtom)
   const [todos, setTodos] = useState<ApiTodo[]>([])
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [loading, setLoading] = useState(false)
@@ -59,7 +60,8 @@ export function Todo() {
       setLoading(true)
       try {
         const backendTodos = await getTodos();
-        
+        setAllTodos(backendTodos);
+
         // Use the UTC formatter to get today's date string.
         // This correctly handles the case where local "today" is different from UTC "today".
         const todayString = formatDateToUTC_YYYYMMDD(new Date());
@@ -136,7 +138,11 @@ export function Todo() {
             Today&apos;s Todos
           </h2>
           <Link href="/todo">
-            <Button variant="ghost" size="icon">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="border border-[var(--border)] hover:border-[var(--ring)]"
+            >
               <CalendarIcon className="h-4 w-4 text-[var(--muted-foreground)]" />
             </Button>
           </Link>

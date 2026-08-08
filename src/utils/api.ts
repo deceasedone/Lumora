@@ -48,12 +48,20 @@ async function apiFetch<T = void>(endpoint: string, options: RequestInit = {}): 
 
   // ✅ Correctly prefix with the full backend URL
   const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? '';
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 15000);
+
   let response;
   try {
-    response = await fetch(`${baseUrl}${endpoint}`, { ...options, headers });
+    response = await fetch(`${baseUrl}${endpoint}`, { ...options, headers, signal: controller.signal });
   } catch (networkError) {
+    if ((networkError as Error).name === 'AbortError') {
+      throw new Error('Request timed out — check the backend is running and reachable.');
+    }
     console.error('Network error:', networkError);
     throw new Error('Network error: Could not reach the server.');
+  } finally {
+    clearTimeout(timeoutId);
   }
 
   if (!response.ok) {
@@ -162,7 +170,8 @@ export const deleteJournalEntry = (id: string): Promise<null> => apiFetch(`/jour
 // Backend should return a file stream with 'Content-Disposition' header
 export const downloadJournalEntryAsFile = async (id: string) => {
   const token = localStorage.getItem('authToken');
-  const response = await fetch(`/api/journal/download/${id}`, {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? '';
+  const response = await fetch(`${baseUrl}/journal/download/${id}`, {
     headers: { 'Authorization': `Bearer ${token}` }
   });
 
@@ -183,7 +192,8 @@ export const downloadJournalEntryAsFile = async (id: string) => {
 // Backend should return a file stream with 'Content-Disposition' header
 export const downloadJournalAsBookFile = async () => {
   const token = localStorage.getItem('authToken');
-  const response = await fetch(`/api/journal/download/book`, {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? '';
+  const response = await fetch(`${baseUrl}/journal/download/book`, {
     headers: { 'Authorization': `Bearer ${token}` }
   });
 

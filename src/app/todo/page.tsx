@@ -7,11 +7,13 @@ import { DayPicker } from "react-day-picker"
 import "react-day-picker/dist/style.css"
 import { useRouter } from "next/navigation";
 
+import { useAtom } from "jotai"
+import { allTodosAtom } from "@/context/data"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { LumoraLogo } from "@/components/lumora"
-import "@/styles/themes.css"
+import "../../styles/themes"
 import { getTodos, createTodo, updateTodo, deleteTodo, Todo } from "@/utils/api";
 
 // =================================================================================
@@ -35,23 +37,24 @@ export default function TodosPage() {
     }
   }, [router]);
 
+  const [cachedTodos, setCachedTodos] = useAtom(allTodosAtom)
   const [selectedDay, setSelectedDay] = useState<Date | undefined>(new Date())
-  const [todos, setTodos] = useState<Todo[]>([])
+  const [todos, setTodos] = useState<Todo[]>(cachedTodos)
   const [newTodoText, setNewTodoText] = useState("")
   const [editingTodo, setEditingTodo] = useState<string | null>(null)
   const [editText, setEditText] = useState("")
   const [showAddForm, setShowAddForm] = useState(false)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(cachedTodos.length === 0)
 
   useEffect(() => {
     async function fetchTodos() {
-      setLoading(true);
       try {
         const backendTodos = await getTodos();
         setTodos(backendTodos);
+        setCachedTodos(backendTodos);
       } catch (error) {
         console.error('Failed to fetch todos:', error);
-        setTodos([]);
+        if (cachedTodos.length === 0) setTodos([]);
       }
       setLoading(false);
     }
@@ -143,8 +146,12 @@ export default function TodosPage() {
               selected={selectedDay}
               onSelect={setSelectedDay}
               modifiers={{ events: eventDays }}
-              modifiersClassNames={{ selected: 'rdp-day_selected', today: 'rdp-day_today', events: 'rdp-day_event' }}
-              className="m-auto scale-125 md:scale-150"
+              modifiersClassNames={{ events: 'rdp-day_event' }}
+              classNames={{
+                selected: 'rdp-day_selected',
+                today: 'rdp-day_today',
+              }}
+              className="m-auto todo-calendar"
               timeZone="UTC" 
             />
           </div>
@@ -191,4 +198,32 @@ export default function TodosPage() {
       </main>
     </div>
   )
+function TodoCalendarStyles() {
+  return (
+    <style jsx global>{`
+      .todo-calendar {
+        font-size: 1.1rem;
+      }
+      .todo-calendar .rdp-day_selected {
+        background-color: var(--primary);
+        color: var(--primary-foreground, var(--background));
+        border-radius: 8px;
+        font-weight: 600;
+      }
+      .todo-calendar .rdp-day_today:not(.rdp-day_selected) {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+      }
+      .todo-calendar .rdp-day_event:not(.rdp-day_selected)::after {
+        content: "";
+        display: block;
+        width: 4px;
+        height: 4px;
+        margin: 2px auto 0;
+        border-radius: 50%;
+        background-color: var(--primary);
+      }
+    `}</style>
+  )
+}
 }
