@@ -488,10 +488,15 @@ export function Stopwatch() {
                 variant="outline"
                 disabled={isTransitioning}
                 title="Start Stopwatch"
-                className="group relative overflow-hidden transition-all duration-200 hover:pr-12"
+                className="group overflow-hidden transition-all duration-300"
               >
                 <div className="flex items-center">
-                  <TimerIcon className="h-4 w-4" />
+                  <TimerIcon className="h-4 w-4 shrink-0" />
+                  <div className="grid grid-cols-[0fr] opacity-0 transition-all duration-500 ease-in-out group-hover:ml-2 group-hover:grid-cols-[1fr] group-hover:opacity-100">
+                    <span className="min-w-0 overflow-hidden whitespace-nowrap">
+                      Stopwatch
+                    </span>
+                  </div>
                 </div>
               </Button>
 
@@ -502,11 +507,16 @@ export function Stopwatch() {
                     variant="outline"
                     disabled={isTransitioning}
                     title="Start Countdown"
-                    className="group relative overflow-hidden transition-all duration-200 hover:pr-12"
+                    className="group overflow-hidden transition-all duration-300"
                   >
                     <div className="flex items-center">
-                      <ClockIcon className="h-4 w-4" />
-                      <ChevronDownIcon className="ml-1 h-3 w-3" />
+                      <ClockIcon className="h-4 w-4 shrink-0" />
+                      <div className="grid grid-cols-[0fr] opacity-0 transition-all duration-500 ease-in-out group-hover:ml-2 group-hover:grid-cols-[1fr] group-hover:opacity-100">
+                        <span className="min-w-0 overflow-hidden whitespace-nowrap">
+                          Countdown
+                        </span>
+                      </div>
+                      <ChevronDownIcon className="ml-1 h-3 w-3 shrink-0" />
                     </div>
                   </Button>
                 </DropdownMenuTrigger>
@@ -528,10 +538,13 @@ export function Stopwatch() {
                 variant="outline"
                 disabled={isTransitioning}
                 title="Start Pomodoro"
-                className="group relative overflow-hidden transition-all duration-200 hover:pr-12"
+                className="group overflow-hidden transition-all duration-300"
               >
                 <div className="flex items-center">
-                  <HourglassIcon className="h-4 w-4" />
+                  <HourglassIcon className="h-4 w-4 shrink-0" />
+                  <span className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 transition-all duration-300 ease-in-out group-hover:ml-2 group-hover:max-w-[100px] group-hover:opacity-100">
+                    Pomodoro
+                  </span>
                 </div>
               </Button>
             </div>
