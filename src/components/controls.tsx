@@ -1,13 +1,16 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
+import type { RefObject } from "react"
 import {
   AllVideosListAtom,
   CurrentlyPlayingMediaAtom,
   isMediaPlayingAtom,
+  MediaDurationAtom,
   MediaProgressAtom,
   playerVolumeAtom,
 } from "@/context/data"
+
 import { useAtom, useAtomValue } from "jotai"
 import {
   MinusIcon,
@@ -26,7 +29,11 @@ import { AllVideoPanel } from "./overlay"
 import { Button } from "./ui/button"
 import { Slider } from "./ui/slider"
 
-export function PlayerControls() {
+export function PlayerControls({
+  playerRef,
+}: {
+  playerRef: RefObject<any>
+}) {
   const [isPlaying, setIsPlaying] = useAtom(isMediaPlayingAtom)
   const [volume, setVolume] = useAtom(playerVolumeAtom)
   const [videoProgress, setVideoProgress] = useAtom(MediaProgressAtom)
@@ -37,16 +44,10 @@ export function PlayerControls() {
 
   const [isHoveringVolume, setIsHoveringVolume] = useState<boolean>(false)
   const [previousVolume, setPreviousVolume] = useState<number>(volume[0])
-  const [isMuted, setIsMuted] = useState<boolean>(volume[0] === 0)
+  const isMuted = volume[0] === 0
 
-  // Update muted state when volume changes
-  useEffect(() => {
-    if (volume[0] === 0 && !isMuted) {
-      setIsMuted(true)
-    } else if (volume[0] > 0 && isMuted) {
-      setIsMuted(false)
-    }
-  }, [volume, isMuted])
+  const duration = useAtomValue(MediaDurationAtom)
+  const isLive = !duration || !isFinite(duration)
 
   const handleChannelChange = (direction: "next" | "prev") => {
     const currentIndex = allVideosList.findIndex(
@@ -87,16 +88,14 @@ export function PlayerControls() {
   }
 
   const handleMuteToggle = () => {
-    if (isMuted || volume[0] === 0) {
+    if (isMuted) {
       // Unmute: restore previous volume or set to 50 if no previous volume
       const restoreVolume = previousVolume > 0 ? previousVolume : 50
       setVolume([restoreVolume])
-      setIsMuted(false)
     } else {
       // Mute: save current volume and set to 0
       setPreviousVolume(volume[0])
       setVolume([0])
-      setIsMuted(true)
     }
   }
 
@@ -104,9 +103,6 @@ export function PlayerControls() {
     setVolume(newVolume)
     if (newVolume[0] > 0) {
       setPreviousVolume(newVolume[0])
-      setIsMuted(false)
-    } else {
-      setIsMuted(true)
     }
   }
 
@@ -217,7 +213,6 @@ export function PlayerControls() {
                     </Button>
 
                     <div className="flex min-w-[140px] items-center gap-3">
-                      <VolumeXIcon className="text-muted-foreground h-3 w-3 shrink-0" />
                       <Slider
                         value={volume}
                         onValueChange={handleSliderChange}
@@ -260,7 +255,6 @@ export function PlayerControls() {
           <motion.div
             className="flex min-w-0 flex-1 items-center gap-4"
             animate={{
-              x: isHoveringVolume ? 200 : 0,
               opacity: isHoveringVolume ? 0.7 : 1,
             }}
             transition={{
@@ -280,10 +274,16 @@ export function PlayerControls() {
             >
               <Slider
                 value={[videoProgress * 100]}
-                onValueChange={(value) => setVideoProgress(value[0])}
+                onValueChange={(value) => {
+                  const fraction = value[0] / 100
+                  setVideoProgress(fraction)
+                  if (playerRef.current && !isLive) {
+                    playerRef.current.currentTime = fraction * duration
+                  }
+                }}
                 max={100}
                 step={0.1}
-                disabled
+                disabled={isLive}
                 className="[&_[role=slider]]:bg-primary [&_[role=slider]]:border-primary-foreground [&_.slider-track]:bg-muted [&_.slider-range]:bg-primary w-full"
               />
             </motion.div>
@@ -357,8 +357,16 @@ export function PlayerControls() {
         <div className="flex items-center gap-2">
           <Slider
             value={[videoProgress * 100]}
+            onValueChange={(value) => {
+              const fraction = value[0] / 100
+              setVideoProgress(fraction)
+              if (playerRef.current && !isLive) {
+                playerRef.current.currentTime = fraction * duration
+              }
+            }}
             max={100}
             step={0.1}
+            disabled={isLive}
             className="[&_[role=slider]]:bg-primary [&_[role=slider]]:border-primary-foreground [&_.slider-track]:bg-muted [&_.slider-range]:bg-primary flex-1"
           />
           <div className="flex min-w-[120px] items-center gap-1">

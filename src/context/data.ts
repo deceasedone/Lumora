@@ -21,6 +21,8 @@ export const isMediaPlayingAtom = atom<boolean>(false)
 
 export const MediaProgressAtom = atom<number>(0)
 
+export const MediaDurationAtom = atom<number>(0)
+
 export const AllVideosListAtom = atom<VideoItem[]>(LOFI_CHANNELS)
 
 export const CurrentlyPlayingMediaAtom = atom<{

@@ -1,9 +1,11 @@
 "use client"
 
+import { useRef } from "react"
 import dynamic from "next/dynamic"
 import {
   CurrentlyPlayingMediaAtom,
   isMediaPlayingAtom,
+  MediaDurationAtom,
   MediaProgressAtom,
   playerVolumeAtom,
 } from "@/context/data"
@@ -21,7 +23,9 @@ export function Player({ hidden = false }: { hidden?: boolean }) {
   const currentChannel = useAtomValue(CurrentlyPlayingMediaAtom)
   const volume = useAtomValue(playerVolumeAtom)
   const setVideoProgress = useSetAtom(MediaProgressAtom)
+  const setMediaDuration = useSetAtom(MediaDurationAtom)
   const [isMediaPlaying, setIsMediaPlaying] = useAtom(isMediaPlayingAtom)
+  const playerRef = useRef<any>(null)
 
   if (!currentChannel) {
     return null
@@ -37,6 +41,7 @@ export function Player({ hidden = false }: { hidden?: boolean }) {
             )}
           >
             <ReactPlayer
+              ref={playerRef}
               loop
               style={{ borderRadius: "var(--radius)", overflow: "hidden" }}
               src={currentChannel.src}
@@ -47,6 +52,10 @@ export function Player({ hidden = false }: { hidden?: boolean }) {
               wrapper={undefined}
               onPlay={() => setIsMediaPlaying(true)}
               onPause={() => setIsMediaPlaying(false)}
+              onError={(error) => {
+                console.error("Player error, stream may be unavailable:", error)
+                setIsMediaPlaying(false)
+              }}
               playing={isMediaPlaying}
               volume={volume[0] / 100}
               onTimeUpdate={(event) => {
@@ -57,8 +66,10 @@ export function Player({ hidden = false }: { hidden?: boolean }) {
 
                 if (!duration || isNaN(duration)) {
                   console.warn("Video duration is not ready yet")
+                  setMediaDuration(0)
                   return
                 }
+                setMediaDuration(duration)
                 const percentage = currentTime / duration
                 setVideoProgress(percentage)
               }}
@@ -68,7 +79,6 @@ export function Player({ hidden = false }: { hidden?: boolean }) {
                   // This error is expected because the YouTube playerVars type is not fully compatible with the react-player types.
                   // The react-player library does not provide a comprehensive type definition for YouTube playerVars.
                   playerVars: {
-                    autoplay: 1,
                     disablekb: 0,
                     rel: 0,
                     fs: 1,
@@ -80,7 +90,7 @@ export function Player({ hidden = false }: { hidden?: boolean }) {
             />
           </div>
         </div>
-        <PlayerControls />
+        <PlayerControls playerRef={playerRef} />
       </div>
     </>
   )
