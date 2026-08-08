@@ -81,18 +81,18 @@ export function AuthPage({ onClose, initialMode = "login", initialEmail = "" }: 
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex min-h-screen bg-black overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex min-h-screen bg-[#F8F6F2] overflow-y-auto">
       {/* Background */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        {/* Gradient Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-black to-blue-900/20" />
+        {/* Soft ambient wash */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#E8F0EC] via-[#F8F6F2] to-[#E8F0EC]" />
 
         {/* Animated Particles */}
         <div className="absolute inset-0 overflow-hidden">
           {[...Array(20)].map((_, i) => (
             <motion.div
               key={i}
-              className="absolute w-1 h-1 bg-purple-400/30 rounded-full"
+              className="absolute w-1 h-1 bg-[#7AB8A8]/30 rounded-full"
               style={{
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
@@ -115,7 +115,7 @@ export function AuthPage({ onClose, initialMode = "login", initialEmail = "" }: 
       {onClose && (
         <button
           onClick={onClose}
-          className="absolute top-6 right-6 z-30 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-all duration-200"
+          className="absolute top-6 right-6 z-30 w-10 h-10 flex items-center justify-center rounded-full bg-white border border-[#A8C5D4]/40 text-[#2C3338] hover:bg-[#E8F0EC] transition-all duration-200"
         >
           <X className="w-5 h-5" />
         </button>
@@ -133,25 +133,25 @@ export function AuthPage({ onClose, initialMode = "login", initialEmail = "" }: 
           >
             {/* Logo */}
             <div className="flex items-center mb-12">
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-500 rounded-xl flex items-center justify-center mr-4">
+              <div className="w-12 h-12 bg-[#7AB8A8] rounded-xl flex items-center justify-center mr-4">
                 <Sparkles className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-white">LUMORA</h1>
-                <p className="text-purple-300 text-sm">Digital Sanctuary</p>
+                <h1 className="text-2xl font-bold text-[#2C3338]">LUMORA</h1>
+                <p className="text-[#2C3338]/60 text-sm">Digital Sanctuary</p>
               </div>
             </div>
 
             {/* Headline */}
-            <h2 className="text-5xl font-bold text-white mb-6 leading-tight">
+            <h2 className="text-5xl font-bold text-[#2C3338] mb-6 leading-tight">
               Transform Your
               <br />
-              <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+              <span className="text-[#7AB8A8]">
                 Productivity
               </span>
             </h2>
 
-            <p className="text-gray-300 text-lg mb-12 leading-relaxed">
+            <p className="text-[#2C3338]/70 text-lg mb-12 leading-relaxed">
               Join thousands of creators who&apos;ve discovered their perfect digital workspace. Where focus meets artistry.
             </p>
 
@@ -164,7 +164,7 @@ export function AuthPage({ onClose, initialMode = "login", initialEmail = "" }: 
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.3 + index * 0.1 }}
-                    className="flex items-center text-gray-300"
+                    className="flex items-center text-[#2C3338]/70"
                   >
                     <span>{feature}</span>
                   </motion.div>
@@ -183,11 +183,11 @@ export function AuthPage({ onClose, initialMode = "login", initialEmail = "" }: 
             className="w-full max-w-md"
           >
             {/* Mode Toggle */}
-            <div className="flex mb-8 p-1 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10">
+            <div className="flex mb-8 p-1 bg-[#E8F0EC] rounded-2xl border border-[#A8C5D4]/30">
               <button
                 onClick={() => switchMode("login")}
                 className={`flex-1 py-3 px-6 rounded-xl text-sm font-medium transition-all duration-200 ${
-                  mode === "login" ? "bg-white text-black shadow-lg" : "text-gray-300 hover:text-white"
+                  mode === "login" ? "bg-white text-[#2C3338] shadow-sm" : "text-[#2C3338]/60 hover:text-[#2C3338]"
                 }`}
               >
                 Sign In
@@ -195,7 +195,7 @@ export function AuthPage({ onClose, initialMode = "login", initialEmail = "" }: 
               <button
                 onClick={() => switchMode("signup")}
                 className={`flex-1 py-3 px-6 rounded-xl text-sm font-medium transition-all duration-200 ${
-                  mode === "signup" ? "bg-white text-black shadow-lg" : "text-gray-300 hover:text-white"
+                  mode === "signup" ? "bg-white text-[#2C3338] shadow-sm" : "text-[#2C3338]/60 hover:text-[#2C3338]"
                 }`}
               >
                 Sign Up
@@ -203,10 +203,10 @@ export function AuthPage({ onClose, initialMode = "login", initialEmail = "" }: 
             </div>
 
             {/* Auth Card */}
-            <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 shadow-2xl">
+            <div className="bg-white rounded-3xl p-8 border border-[#A8C5D4]/30 shadow-lg">
               {/* Header */}
               <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-[#7AB8A8] rounded-2xl flex items-center justify-center mx-auto mb-4">
                   {mode === "login" ? <Lock className="w-8 h-8 text-white" /> : <User className="w-8 h-8 text-white" />}
                 </div>
 
@@ -216,13 +216,13 @@ export function AuthPage({ onClose, initialMode = "login", initialEmail = "" }: 
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="text-2xl font-bold text-white mb-2"
+                    className="text-2xl font-bold text-[#2C3338] mb-2"
                   >
                     {mode === "login" ? "Welcome Back" : "Create Account"}
                   </motion.h3>
                 </AnimatePresence>
 
-                <p className="text-gray-400">
+                <p className="text-[#2C3338]/60">
                   {mode === "login" ? "Sign in to your account" : "Join the productivity revolution"}
                 </p>
               </div>
@@ -246,7 +246,7 @@ export function AuthPage({ onClose, initialMode = "login", initialEmail = "" }: 
                   {mode === "signup" && (
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="firstName" className="text-gray-300 text-sm font-medium">
+                        <Label htmlFor="firstName" className="text-[#2C3338]/80 text-sm font-medium">
                           First Name
                         </Label>
                         <Input
@@ -254,13 +254,13 @@ export function AuthPage({ onClose, initialMode = "login", initialEmail = "" }: 
                           type="text"
                           value={formData.firstName}
                           onChange={(e) => handleInputChange("firstName", e.target.value)}
-                          className="mt-1 h-12 bg-white/10 border-white/20 text-white placeholder:text-gray-400 rounded-xl focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                          className="mt-1 h-12 bg-[#E8F0EC] border-[#A8C5D4]/40 text-[#2C3338] placeholder:text-[#2C3338]/40 rounded-xl focus:border-[#7AB8A8] focus:ring-1 focus:ring-[#7AB8A8]"
                           placeholder="John"
                           required
                         />
                       </div>
                       <div>
-                        <Label htmlFor="lastName" className="text-gray-300 text-sm font-medium">
+                        <Label htmlFor="lastName" className="text-[#2C3338]/80 text-sm font-medium">
                           Last Name
                         </Label>
                         <Input
@@ -268,7 +268,7 @@ export function AuthPage({ onClose, initialMode = "login", initialEmail = "" }: 
                           type="text"
                           value={formData.lastName}
                           onChange={(e) => handleInputChange("lastName", e.target.value)}
-                          className="mt-1 h-12 bg-white/10 border-white/20 text-white placeholder:text-gray-400 rounded-xl focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                          className="mt-1 h-12 bg-[#E8F0EC] border-[#A8C5D4]/40 text-[#2C3338] placeholder:text-[#2C3338]/40 rounded-xl focus:border-[#7AB8A8] focus:ring-1 focus:ring-[#7AB8A8]"
                           placeholder="Doe"
                           required
                         />
@@ -277,17 +277,17 @@ export function AuthPage({ onClose, initialMode = "login", initialEmail = "" }: 
                   )}
 
                   <div>
-                    <Label htmlFor="email" className="text-gray-300 text-sm font-medium">
+                    <Label htmlFor="email" className="text-[#2C3338]/80 text-sm font-medium">
                       Email
                     </Label>
                     <div className="relative mt-1">
-                      <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#2C3338]/40" />
                       <Input
                         id="email"
                         type="email"
                         value={formData.email}
                         onChange={(e) => handleInputChange("email", e.target.value)}
-                        className="h-12 pl-12 bg-white/10 border-white/20 text-white placeholder:text-gray-400 rounded-xl focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                        className="h-12 pl-12 bg-[#E8F0EC] border-[#A8C5D4]/40 text-[#2C3338] placeholder:text-[#2C3338]/40 rounded-xl focus:border-[#7AB8A8] focus:ring-1 focus:ring-[#7AB8A8]"
                         placeholder="john@example.com"
                         required
                       />
@@ -295,24 +295,24 @@ export function AuthPage({ onClose, initialMode = "login", initialEmail = "" }: 
                   </div>
 
                   <div>
-                    <Label htmlFor="password" className="text-gray-300 text-sm font-medium">
+                    <Label htmlFor="password" className="text-[#2C3338]/80 text-sm font-medium">
                       Password
                     </Label>
                     <div className="relative mt-1">
-                      <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#2C3338]/40" />
                       <Input
                         id="password"
                         type={showPassword ? "text" : "password"}
                         value={formData.password}
                         onChange={(e) => handleInputChange("password", e.target.value)}
-                        className="h-12 pl-12 pr-12 bg-white/10 border-white/20 text-white placeholder:text-gray-400 rounded-xl focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                        className="h-12 pl-12 pr-12 bg-[#E8F0EC] border-[#A8C5D4]/40 text-[#2C3338] placeholder:text-[#2C3338]/40 rounded-xl focus:border-[#7AB8A8] focus:ring-1 focus:ring-[#7AB8A8]"
                         placeholder="Enter your password"
                         required
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#2C3338]/40 hover:text-[#2C3338] transition-colors"
                       >
                         {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                       </button>
@@ -321,17 +321,17 @@ export function AuthPage({ onClose, initialMode = "login", initialEmail = "" }: 
 
                   {mode === "signup" && (
                     <div>
-                      <Label htmlFor="confirmPassword" className="text-gray-300 text-sm font-medium">
+                      <Label htmlFor="confirmPassword" className="text-[#2C3338]/80 text-sm font-medium">
                         Confirm Password
                       </Label>
                       <div className="relative mt-1">
-                        <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#2C3338]/40" />
                         <Input
                           id="confirmPassword"
                           type="password"
                           value={formData.confirmPassword}
                           onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
-                          className="h-12 pl-12 bg-white/10 border-white/20 text-white placeholder:text-gray-400 rounded-xl focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                          className="h-12 pl-12 bg-[#E8F0EC] border-[#A8C5D4]/40 text-[#2C3338] placeholder:text-[#2C3338]/40 rounded-xl focus:border-[#7AB8A8] focus:ring-1 focus:ring-[#7AB8A8]"
                           placeholder="Confirm your password"
                           required
                         />
@@ -342,7 +342,7 @@ export function AuthPage({ onClose, initialMode = "login", initialEmail = "" }: 
                   <Button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full h-12 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-semibold rounded-xl transition-all duration-200 disabled:opacity-50 group"
+                    className="w-full h-12 bg-[#8FBC8F] hover:bg-[#7AB8A8] text-white font-semibold rounded-xl transition-all duration-200 disabled:opacity-50 group"
                   >
                     {isLoading ? (
                       <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -359,17 +359,17 @@ export function AuthPage({ onClose, initialMode = "login", initialEmail = "" }: 
               {/* Footer */}
               <div className="mt-6 text-center">
                 {mode === "login" ? (
-                  <button className="text-purple-400 hover:text-purple-300 text-sm transition-colors">
+                  <button className="text-[#7AB8A8] hover:text-[#2C3338] text-sm transition-colors">
                     Forgot your password?
                   </button>
                 ) : (
-                  <p className="text-gray-400 text-sm">
+                  <p className="text-[#2C3338]/60 text-sm">
                     By signing up, you agree to our{" "}
-                    <a href="#" className="text-purple-400 hover:text-purple-300 transition-colors">
+                    <a href="#" className="text-[#7AB8A8] hover:text-[#2C3338] transition-colors">
                       Terms
                     </a>{" "}
                     and{" "}
-                    <a href="#" className="text-purple-400 hover:text-purple-300 transition-colors">
+                    <a href="#" className="text-[#7AB8A8] hover:text-[#2C3338] transition-colors">
                       Privacy Policy
                     </a>
                   </p>
@@ -380,10 +380,10 @@ export function AuthPage({ onClose, initialMode = "login", initialEmail = "" }: 
             {/* Mobile Logo */}
             <div className="lg:hidden mt-8 text-center">
               <div className="flex items-center justify-center">
-                <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center mr-3">
+                <div className="w-8 h-8 bg-[#7AB8A8] rounded-lg flex items-center justify-center mr-3">
                   <Sparkles className="w-4 h-4 text-white" />
                 </div>
-                <span className="text-lg font-bold text-white">LUMORA</span>
+                <span className="text-lg font-bold text-[#2C3338]">LUMORA</span>
               </div>
             </div>
           </motion.div>

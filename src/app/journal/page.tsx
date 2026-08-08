@@ -12,7 +12,7 @@ import DOMPurify from "dompurify"
 
 import { Button } from "@/components/ui/button"
 import { LumoraLogo } from "@/components/lumora"
-import "@/styles/themes.css"
+import "../../styles/themes"
 import { useRouter } from "next/navigation";
 
 // --------------------------------------------------
@@ -23,6 +23,7 @@ interface JournalEntry {
   id: string
   title: string
   date: string
+  updatedDate: string
   content: string // HTML content from Tiptap
 }
 
@@ -30,6 +31,7 @@ interface ApiJournalEntry {
   id: string
   title: string
   created_at: string
+  updated_at: string
   content: string
 }
 
@@ -337,14 +339,16 @@ export default function JournalPage() {
         const backendEntries = await getJournalEntries();
         // Safely cast the response to ApiJournalEntry[]
         const apiEntries = backendEntries as unknown as ApiJournalEntry[];
-        const journalEntries: JournalEntry[] = apiEntries.map(e => ({
-          id: e.id,
-          title: e.title,
-          date: e.created_at ? new Date(e.created_at).toISOString().split("T")[0] : "",
-          content: e.content,
-        }));
-        setEntries(journalEntries);
-        if (apiEntries.length) setSelectedId(apiEntries[0].id);
+        const journalEntries: JournalEntry[] = apiEntries
+          .map(e => ({
+            id: e.id,
+            title: e.title,
+            date: e.created_at ? new Date(e.created_at).toISOString().split("T")[0] : "",
+            updatedDate: e.updated_at ? new Date(e.updated_at).toISOString().split("T")[0] : "",
+            content: e.content,
+          }))
+          .sort((a, b) => a.date.localeCompare(b.date));
+        setEntries(journalEntries);        if (apiEntries.length) setSelectedId(apiEntries[0].id);
       } catch (error) {
         console.error("Failed to load journal entries:", error);
         setEntries([]);
@@ -380,10 +384,11 @@ export default function JournalPage() {
         id: apiEntry.id,
         title: apiEntry.title,
         date: apiEntry.created_at ? new Date(apiEntry.created_at).toISOString().split("T")[0] : "",
+        updatedDate: apiEntry.created_at ? new Date(apiEntry.created_at).toISOString().split("T")[0] : "",
         content: apiEntry.content,
       };
       
-      setEntries(prev => [newJournalEntry, ...prev]);
+      setEntries(prev => [...prev, newJournalEntry]);
       setSelectedId(apiEntry.id);
     } catch (error) {
       console.error('Failed to create journal entry:', error);
@@ -408,11 +413,11 @@ export default function JournalPage() {
               title: updated.title,
               content: updated.content,
               date: updated.created_at ? new Date(updated.created_at).toISOString().split("T")[0] : e.date,
+              updatedDate: updated.updated_at ? new Date(updated.updated_at).toISOString().split("T")[0] : e.updatedDate,
             } 
           : e
         )
-      );
-    } catch (error) {
+      );    } catch (error) {
       console.error('Failed to update journal entry:', error);
     }
   };
@@ -481,12 +486,25 @@ export default function JournalPage() {
       <main className="grid flex-1 grid-cols-1 gap-6 p-6 md:grid-cols-4">
         <aside className="flex flex-col gap-2 rounded-lg border border-[var(--border)] bg-[var(--card)] p-2 md:col-span-1">
           {entries.length === 0 && (<div className="p-4 text-center text-sm text-[var(--muted-foreground)]">No entries yet. Create one!</div>)}
-          {entries.map(entry => (
-            <button key={entry.id} onClick={() => setSelectedId(entry.id)} className={`w-full rounded-md p-3 text-left text-sm transition-colors ${selectedId === entry.id ? "bg-[var(--primary)] text-[var(--primary-foreground)]" : "hover:bg-[var(--accent)]"}`}>
-              <h3 className="font-semibold">{entry.title}</h3>
-              <p className={`text-xs ${selectedId === entry.id ? "text-[var(--primary-foreground)]/80" : "text-[var(--muted-foreground)]"}`}>{entry.date}</p>
-            </button>
-          ))}
+          {entries.map(entry => {
+            const teaser = entry.content.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim().slice(0, 80)
+            return (
+              <button key={entry.id} onClick={() => setSelectedId(entry.id)} className={`w-full rounded-md border border-[var(--border)] p-3 text-left text-sm transition-colors ${selectedId === entry.id ? "bg-[var(--primary)] text-[var(--primary-foreground)]" : "hover:bg-[var(--accent)]"}`}>
+                <h3 className="font-semibold">{entry.title}</h3>
+                {teaser && (
+                  <p className={`mt-1 line-clamp-2 text-xs ${selectedId === entry.id ? "text-[var(--primary-foreground)]/80" : "text-[var(--muted-foreground)]"}`}>
+                    {teaser}{entry.content.replace(/<[^>]*>/g, "").length > 80 ? "…" : ""}
+                  </p>
+                )}
+                <div className="mt-2 flex items-center justify-between">
+                  <span className={`text-[10px] ${selectedId === entry.id ? "text-[var(--primary-foreground)]/70" : "text-[var(--muted-foreground)]"}`}>{entry.date}</span>
+                  {entry.updatedDate && entry.updatedDate !== entry.date && (
+                    <span className={`text-[10px] italic ${selectedId === entry.id ? "text-[var(--primary-foreground)]/70" : "text-[var(--muted-foreground)]"}`}>Modified {entry.updatedDate}</span>
+                  )}
+                </div>
+              </button>
+            )
+          })}
         </aside>
         
         {selectedEntry ? (

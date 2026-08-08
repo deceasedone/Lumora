@@ -49,11 +49,10 @@ const defaultSteps: Step[] = [
       "Create personalized workspace environments",
       "Save and share your favorite setups",
     ],
-    color: "from-purple-500 to-violet-600",
+    color: "from-[#7AB8A8] to-[#8FBC8F]",
   },
   {
-    id: 2,
-    title: "Craft Your Soundscape",
+    id: 2,    title: "Craft Your Soundscape",
     description: "Layer binaural beats, nature sounds, and focus frequencies for peak performance",
     icon: <Music className="w-6 h-6" />,
     details: [
@@ -62,7 +61,7 @@ const defaultSteps: Step[] = [
       "AI-powered audio recommendations",
       "Sync soundscapes with your work sessions",
     ],
-    color: "from-blue-500 to-cyan-600",
+    color: "from-[#A8C5D4] to-[#7AB8A8]",
   },
   {
     id: 3,
@@ -75,7 +74,7 @@ const defaultSteps: Step[] = [
       "Real-time productivity analytics and insights",
       "Collaborative focus rooms with team members",
     ],
-    color: "from-violet-500 to-purple-600",
+    color: "from-[#8FBC8F] to-[#A8C5D4]",
   },
   {
     id: 4,
@@ -88,7 +87,7 @@ const defaultSteps: Step[] = [
       "Goal tracking and achievement celebrations",
       "Export data and integrate with other tools",
     ],
-    color: "from-cyan-500 to-blue-600",
+    color: "from-[#7AB8A8] to-[#A8C5D4]",
   },
 ]
 
@@ -103,8 +102,8 @@ const StepCard: React.FC<{ step: Step; isActive: boolean; onClick: () => void }>
       <Card
         className={`p-6 border-2 transition-all duration-300 h-full ${
           isActive
-            ? "border-purple-500 bg-purple-500/10 shadow-lg shadow-purple-500/25"
-            : "border-purple-500/20 hover:border-purple-500/40 bg-black/60 backdrop-blur-xl"
+            ? "border-[#7AB8A8] bg-[#E8F0EC] shadow-md"
+            : "border-[#A8C5D4]/30 hover:border-[#7AB8A8]/50 bg-white"
         }`}
       >
         <div className="flex items-start space-x-4">
@@ -119,17 +118,17 @@ const StepCard: React.FC<{ step: Step; isActive: boolean; onClick: () => void }>
                 Step {step.id}
               </Badge>
               {isActive && (
-                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-purple-400">
+                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-[#7AB8A8]">
                   <CheckCircle className="w-4 h-4" />
                 </motion.div>
               )}
             </div>
             <h3
-              className={`font-semibold text-lg mb-2 transition-colors ${isActive ? "text-purple-300" : "text-white"}`}
+              className={`font-semibold text-lg mb-2 transition-colors ${isActive ? "text-[#7AB8A8]" : "text-[#2C3338]"}`}
             >
               {step.title}
             </h3>
-            <p className="text-gray-300 text-sm leading-relaxed">{step.description}</p>
+            <p className="text-[#2C3338]/70 text-sm leading-relaxed">{step.description}</p>
           </div>
         </div>
       </Card>
@@ -149,28 +148,27 @@ const StepDetails: React.FC<{ step: Step }> = ({ step }) => {
     >
       <div className="text-center space-y-4">
         <div
-          className={`inline-flex w-20 h-20 rounded-full bg-gradient-to-r ${step.color} items-center justify-center text-white text-2xl shadow-2xl`}
+          className={`inline-flex w-20 h-20 rounded-full bg-gradient-to-r ${step.color} items-center justify-center text-white text-2xl shadow-lg`}
         >
           {step.icon}
         </div>
         <div>
-          <h2 className="text-3xl font-bold text-white mb-2">{step.title}</h2>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto">{step.description}</p>
+          <h2 className="text-3xl font-bold text-[#2C3338] mb-2">{step.title}</h2>
+          <p className="text-xl text-[#2C3338]/70 max-w-2xl mx-auto">{step.description}</p>
         </div>
-      </div>
-      <div className="grid md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+      </div>      <div className="grid md:grid-cols-2 gap-4 max-w-4xl mx-auto">
         {step.details.map((detail, index) => (
           <motion.div
             key={index}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
-            className="flex items-start space-x-3 p-4 rounded-lg bg-purple-500/10 border border-purple-500/20 backdrop-blur-sm"
+            className="flex items-start space-x-3 p-4 rounded-lg bg-[#E8F0EC] border border-[#A8C5D4]/30"
           >
-            <div className="flex-shrink-0 w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center mt-0.5">
-              <div className="w-2 h-2 rounded-full bg-purple-400" />
+            <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#7AB8A8]/20 flex items-center justify-center mt-0.5">
+              <div className="w-2 h-2 rounded-full bg-[#7AB8A8]" />
             </div>
-            <p className="text-sm text-gray-300 leading-relaxed">{detail}</p>
+            <p className="text-sm text-[#2C3338]/70 leading-relaxed">{detail}</p>
           </motion.div>
         ))}
       </div>
@@ -234,30 +232,28 @@ const HowItWorks: React.FC<HowItWorksProps> = ({
 
   return (
     <section
-      className="py-32 px-4 bg-black relative overflow-hidden"
+      id="how-it-works"
+      className="py-32 px-4 bg-[#F8F6F2] relative overflow-hidden"
       onKeyDown={handleKeyDown}
       tabIndex={0}
       role="region"
       aria-label="How it works guide"
     >
-      {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black via-blue-950/10 to-black" />
-
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Header */}
         <div className="text-center mb-12">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-            <div className="inline-block mb-4 px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-full">
-              <span className="text-blue-400 text-sm font-medium">🚀 Simple Process</span>
+            <div className="inline-block mb-4 px-4 py-2 bg-[#E8F0EC] border border-[#A8C5D4]/40 rounded-full">
+              <span className="text-[#7AB8A8] text-sm font-medium">🚀 Simple Process</span>
             </div>
-            <h1 className="text-5xl md:text-7xl font-bold mb-8 bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent leading-tight">
+            <h1 className="text-5xl md:text-7xl font-bold mb-8 text-[#2C3338] leading-tight">
               Your Journey to
               <br />
-              <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent">
+              <span className="text-[#7AB8A8]">
                 Peak Focus
               </span>
             </h1>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-[#2C3338]/70 max-w-3xl mx-auto leading-relaxed">
               Transform your productivity in four simple steps. No complex setup, just pure focus enhancement.
             </p>
           </motion.div>
@@ -267,10 +263,10 @@ const HowItWorks: React.FC<HowItWorksProps> = ({
         {showProgress && (
           <div className="mb-8">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-sm font-medium text-white">
+              <span className="text-sm font-medium text-[#2C3338]">
                 Step {currentStep + 1} of {steps.length}
               </span>
-              <span className="text-sm text-gray-400">{Math.round(progressPercentage)}% Complete</span>
+              <span className="text-sm text-[#2C3338]/60">{Math.round(progressPercentage)}% Complete</span>
             </div>
             <Progress value={progressPercentage} className="h-2" />
           </div>
@@ -299,7 +295,7 @@ const HowItWorks: React.FC<HowItWorksProps> = ({
               onClick={prevStep}
               disabled={currentStep === 0}
               aria-label="Previous step"
-              className="border-purple-500/30 text-purple-300 hover:bg-purple-500/10 hover:text-white bg-transparent"
+              className="border-[#A8C5D4]/40 text-[#7AB8A8] hover:bg-[#E8F0EC] hover:text-[#2C3338] bg-transparent"
             >
               <ChevronLeft className="w-4 h-4 mr-1" />
               Previous
@@ -310,7 +306,7 @@ const HowItWorks: React.FC<HowItWorksProps> = ({
               onClick={nextStep}
               disabled={currentStep === steps.length - 1}
               aria-label="Next step"
-              className="border-purple-500/30 text-purple-300 hover:bg-purple-500/10 hover:text-white bg-transparent"
+              className="border-[#A8C5D4]/40 text-[#7AB8A8] hover:bg-[#E8F0EC] hover:text-[#2C3338] bg-transparent"
             >
               Next
               <ChevronRight className="w-4 h-4 ml-1" />
@@ -324,14 +320,14 @@ const HowItWorks: React.FC<HowItWorksProps> = ({
                 size="sm"
                 onClick={() => setIsPlaying(!isPlaying)}
                 aria-label={isPlaying ? "Pause autoplay" : "Start autoplay"}
-                className="text-purple-300 hover:bg-purple-500/10 hover:text-white"
+                className="text-[#7AB8A8] hover:bg-[#E8F0EC] hover:text-[#2C3338]"
               >
                 <Play className={`w-4 h-4 mr-2 ${isPlaying ? "opacity-50" : ""}`} />
                 {isPlaying ? "Pause" : "Play"}
               </Button>
             )}
 
-            <Button className="group bg-gradient-to-r from-purple-500 via-violet-500 to-blue-500 text-white hover:from-purple-600 hover:via-violet-600 hover:to-blue-600 shadow-lg shadow-purple-500/25">
+            <Button className="group bg-[#8FBC8F] text-white hover:bg-[#7AB8A8] shadow-md">
               Get Started Now
               <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
             </Button>
@@ -346,14 +342,13 @@ const HowItWorks: React.FC<HowItWorksProps> = ({
               onClick={() => goToStep(index)}
               className={`w-3 h-3 rounded-full transition-all duration-300 ${
                 currentStep === index
-                  ? "bg-purple-500 scale-125 shadow-lg shadow-purple-500/50"
-                  : "bg-purple-500/30 hover:bg-purple-500/50"
+                  ? "bg-[#7AB8A8] scale-125 shadow-md"
+                  : "bg-[#A8C5D4]/40 hover:bg-[#A8C5D4]"
               }`}
               aria-label={`Go to step ${index + 1}`}
             />
           ))}
-        </div>
-      </div>
+        </div>      </div>
     </section>
   )
 }

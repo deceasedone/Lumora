@@ -36,7 +36,7 @@ export const BrowserWarningPopup: React.FC<BrowserWarningPopupProps> = ({ onClos
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="bg-gradient-to-r from-purple-900 to-blue-900 border border-purple-500/50 rounded-md p-3 shadow-lg max-w-xs">
+      <div className="bg-[#2C3338] border border-[#7AB8A8]/40 rounded-md p-3 shadow-lg max-w-xs">
         <div className="flex items-start">
           <div className="flex-shrink-0">
             <svg className="h-4 w-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">

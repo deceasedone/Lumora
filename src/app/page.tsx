@@ -28,7 +28,7 @@ export default function LandingPage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-black text-white overflow-x-hidden">
+    <div className="min-h-screen bg-[#F8F6F2] text-[#2C3338] overflow-x-hidden">
       <HeroSection onGetStarted={() => setAuthModal("signup")} onAuthClick={setAuthModal} />
       {showWarning && <BrowserWarningPopup onClose={() => setShowWarning(false)} />}
       <Features />

@@ -148,8 +148,23 @@ export default function TodosPage() {
               modifiers={{ events: eventDays }}
               modifiersClassNames={{ events: 'rdp-day_event' }}
               classNames={{
-                selected: 'rdp-day_selected',
-                today: 'rdp-day_today',
+                root: "text-[var(--foreground)]",
+                month: "flex flex-col gap-3",
+                month_caption: "flex justify-center items-center h-10 mb-2",
+                caption_label: "text-base font-semibold",
+                nav: "flex items-center justify-between absolute inset-x-0 top-0 h-10 px-1",
+                button_previous: "h-8 w-8 rounded-md border border-[var(--border)] flex items-center justify-center hover:bg-[var(--accent)] hover:border-[var(--ring)] transition-colors",
+                button_next: "h-8 w-8 rounded-md border border-[var(--border)] flex items-center justify-center hover:bg-[var(--accent)] hover:border-[var(--ring)] transition-colors",
+                chevron: "fill-[var(--foreground)] h-4 w-4",
+                weekdays: "flex",
+                weekday: "text-[var(--muted-foreground)] text-xs font-medium uppercase tracking-wide w-10 md:w-12 text-center",
+                week: "flex w-full mt-1",
+                day: "w-10 h-10 md:w-12 md:h-12 flex items-center justify-center p-0",
+                day_button: "w-9 h-9 md:w-11 md:h-11 rounded-lg text-sm transition-all duration-150 hover:bg-[var(--accent)] hover:scale-105 cursor-pointer",
+                selected: "!bg-[var(--primary)] !text-[var(--primary-foreground)] font-semibold hover:!bg-[var(--primary)]",
+                today: "border border-[var(--ring)] font-semibold",
+                outside: "text-[var(--muted-foreground)] opacity-40",
+                disabled: "text-[var(--muted-foreground)] opacity-30 cursor-not-allowed hover:scale-100 hover:bg-transparent",
               }}
               className="m-auto todo-calendar"
               timeZone="UTC" 
@@ -201,21 +216,7 @@ export default function TodosPage() {
 function TodoCalendarStyles() {
   return (
     <style jsx global>{`
-      .todo-calendar {
-        font-size: 1.1rem;
-      }
-      .todo-calendar .rdp-day_selected {
-        background-color: var(--primary);
-        color: var(--primary-foreground, var(--background));
-        border-radius: 8px;
-        font-weight: 600;
-      }
-      .todo-calendar .rdp-day_today:not(.rdp-day_selected) {
-        border: 1px solid var(--border);
-        border-radius: 8px;
-      }
-      .todo-calendar .rdp-day_event:not(.rdp-day_selected)::after {
-        content: "";
+      .todo-calendar .rdp-day_event:not(.rdp-day_selected)::after {        content: "";
         display: block;
         width: 4px;
         height: 4px;

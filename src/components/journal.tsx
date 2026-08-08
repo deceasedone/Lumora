@@ -52,7 +52,7 @@ export function Journal() {
     // Basic editor styling to match the rest of the app
     editorProps: {
       attributes: {
-        class: 'prose dark:prose-invert prose-sm sm:prose-base lg:prose-lg xl:prose-2xl m-5 focus:outline-none h-full',
+        class: 'prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl max-w-none m-5 text-[var(--foreground)] focus:outline-none h-full [&_p.is-editor-empty:first-child::before]:text-[var(--muted-foreground)] [&_p.is-editor-empty:first-child::before]:opacity-70',
       },
     },
   })
@@ -106,9 +106,9 @@ export function Journal() {
           </div>
 
           {/* This container will grow and allow the editor to scroll */}
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto mx-6 mt-3 mb-4 rounded-md border border-[var(--border)] bg-[var(--input)]/20">
             <EditorContent editor={editor} />
-          </div>
+          </div>        
         </div>
 
         <SheetFooter className="flex-col-reverse items-center gap-2 border-t border-[var(--border)] px-6 py-4 sm:flex-row sm:justify-between">

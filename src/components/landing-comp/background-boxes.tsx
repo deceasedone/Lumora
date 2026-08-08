@@ -8,15 +8,15 @@ const isTouchDevice = () =>
   typeof window !== "undefined" && ("ontouchstart" in window || navigator.maxTouchPoints > 0)
 
 const COLORS = [
-  "rgb(147 51 234)",
-  "rgb(139 92 246)",
-  "rgb(168 85 247)",
-  "rgb(196 181 253)",
-  "rgb(59 130 246)",
-  "rgb(147 197 253)",
-  "rgb(165 180 252)",
-  "rgb(216 180 254)",
-  "rgb(196 181 253)",
+  "rgb(122 184 168)",
+  "rgb(143 188 143)",
+  "rgb(168 197 212)",
+  "rgb(94 158 143)",
+  "rgb(184 212 200)",
+  "rgb(158 196 158)",
+  "rgb(200 220 210)",
+  "rgb(110 150 140)",
+  "rgb(180 205 190)",
 ]
 
 const BoxesCore = ({ className, ...rest }: { className?: string }) => {
@@ -75,15 +75,15 @@ const BoxesCore = ({ className, ...rest }: { className?: string }) => {
       {...rest}
     >
       {rows.map((_, i) => (
-        <div key={`row` + i} className="w-16 h-8 border-l border-purple-900/30 relative">
+        <div key={`row` + i} className="w-16 h-8 border-l border-[#7AB8A8]/20 relative">
           {cols.map((_, j) =>
             touch ? (
-              <div key={`col` + j} className="w-16 h-8 border-r border-t border-purple-900/30 relative" />
+              <div key={`col` + j} className="w-16 h-8 border-r border-t border-[#7AB8A8]/20 relative" />
             ) : (
               <motion.div
                 key={`col` + j}
                 whileHover={{ backgroundColor: getRandomColor(), transition: { duration: 0.08 } }}
-                className="w-16 h-8 border-r border-t border-purple-900/30 relative"
+                className="w-16 h-8 border-r border-t border-[#7AB8A8]/20 relative"
                 transition={{ type: "tween", duration: 0.08 }}
               >
                 {j % 2 === 0 && i % 2 === 0 ? (
@@ -93,7 +93,7 @@ const BoxesCore = ({ className, ...rest }: { className?: string }) => {
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
                     stroke="currentColor"
-                    className="absolute h-6 w-10 -top-[14px] -left-[22px] text-purple-700/30 stroke-[1px] pointer-events-none"
+                    className="absolute h-6 w-10 -top-[14px] -left-[22px] text-[#7AB8A8]/25 stroke-[1px] pointer-events-none"
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6" />
                   </svg>

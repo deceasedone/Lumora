@@ -72,27 +72,23 @@ export function Features() {
   ]
 
   return (
-    <section id="features" className="py-32 relative overflow-hidden bg-black">
-      {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black via-purple-950/10 to-black" />
-
+    <section id="features" className="py-32 relative overflow-hidden bg-[#F8F6F2]">
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-20">
-          <div className="inline-block mb-4 px-4 py-2 bg-purple-500/10 border border-purple-500/20 rounded-full">
-            <span className="text-purple-400 text-sm font-medium">✨ Powerful Features</span>
+          <div className="inline-block mb-4 px-4 py-2 bg-[#E8F0EC] border border-[#A8C5D4]/40 rounded-full">
+            <span className="text-[#7AB8A8] text-sm font-medium">✨ Powerful Features</span>
           </div>
-          <h2 className="text-5xl md:text-7xl font-bold mb-8 bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent leading-tight">
+          <h2 className="text-5xl md:text-7xl font-bold mb-8 text-[#2C3338] leading-tight">
             Beyond Ordinary
             <br />
-            <span className="bg-gradient-to-r from-purple-400 via-violet-400 to-blue-400 bg-clip-text text-transparent">
+            <span className="text-[#7AB8A8]">
               Productivity
             </span>
           </h2>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl text-[#2C3338]/70 max-w-3xl mx-auto leading-relaxed">
             Experience the next evolution of digital workspaces with features designed to unlock your full potential.
           </p>
         </div>
-
         <FeaturesSectionWithHoverEffects />
       </div>
     </section>

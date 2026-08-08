@@ -30,9 +30,7 @@ function Footerdemo({ onSubscribe }: FooterdemoProps) {
   }, [isDarkMode])
 
   return (
-    <footer className="relative border-t border-purple-500/20 bg-black text-white transition-colors duration-300">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-t from-purple-950/10 to-transparent" />
+    <footer className="relative border-t border-[#A8C5D4]/30 bg-[#F8F6F2] text-[#2C3338] transition-colors duration-300">
 
       <div className="container mx-auto px-4 py-12 md:px-6 lg:px-8 relative z-10">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
@@ -40,20 +38,19 @@ function Footerdemo({ onSubscribe }: FooterdemoProps) {
             {/* Brand */}
             <div className="flex items-center space-x-3 mb-6">
               <div className="relative">
-                <div className="w-13 h-13 bg-gradient-to-br from-purple-400 via-violet-500 to-blue-500 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-500/25">
-                  <LumoraLogo size={60} coreColor="rgb(34 211 238)" orbitColor="rgb(34 211 238)" />
+                <div className="w-13 h-13 bg-[#7AB8A8] rounded-2xl flex items-center justify-center shadow-lg">
+                  <LumoraLogo size={60} coreColor="#F8F6F2" orbitColor="#F8F6F2" />
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-400 via-violet-500 to-blue-500 rounded-2xl blur-md opacity-50 -z-10"></div>
               </div>
               <div>
-                <span className="text-2xl font-bold bg-gradient-to-r from-purple-400 via-violet-300 to-blue-400 bg-clip-text text-transparent">
+                <span className="text-2xl font-bold text-[#7AB8A8]">
                   LUMORA
                 </span>
-                <div className="text-sm text-purple-300/60 -mt-1">Digital Sanctuary</div>
+                <div className="text-sm text-[#2C3338]/60 -mt-1">Digital Sanctuary</div>
               </div>
             </div>
 
-            <p className="mb-6 text-gray-400 leading-relaxed max-w-md">
+            <p className="mb-6 text-[#2C3338]/70 leading-relaxed max-w-md">
               Transform your productivity with an immersive digital workspace that adapts to your flow. Where focus
               meets artistry.
             </p>
@@ -64,65 +61,64 @@ function Footerdemo({ onSubscribe }: FooterdemoProps) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
-                className="pr-12 backdrop-blur-sm bg-black/50 border-purple-500/30 text-white focus:border-purple-500 focus:ring-purple-500/20"
+                className="pr-12 backdrop-blur-sm bg-white border-[#A8C5D4]/40 text-[#2C3338] focus:border-[#7AB8A8] focus:ring-[#7AB8A8]/20"
                 required
               />
               <Button
                 type="submit"
                 size="icon"
-                className="absolute right-1 top-1 h-8 w-8 rounded-full bg-gradient-to-r from-purple-500 to-violet-500 text-white transition-transform hover:scale-105 shadow-lg shadow-purple-500/25"
+                className="absolute right-1 top-1 h-8 w-8 rounded-full bg-[#8FBC8F] text-white transition-transform hover:scale-105 hover:bg-[#7AB8A8] shadow-md"
               >
                 <Send className="h-4 w-4" />
                 <span className="sr-only">Subscribe</span>
               </Button>
             </form>
-            <div className="absolute -right-4 top-0 h-24 w-24 rounded-full bg-purple-500/10 blur-2xl" />
           </div>
 
           <div>
-            <h3 className="mb-4 text-lg font-semibold text-white">Product</h3>
+            <h3 className="mb-4 text-lg font-semibold text-[#2C3338]">Product</h3>
             <nav className="space-y-2 text-sm">
-              <a href="#features" className="block transition-colors hover:text-purple-400 text-gray-400">
+              <a href="#features" className="block transition-colors hover:text-[#7AB8A8] text-[#2C3338]/60">
                 Features
               </a>
-              <a href="#how-it-works" className="block transition-colors hover:text-purple-400 text-gray-400">
+              <a href="#how-it-works" className="block transition-colors hover:text-[#7AB8A8] text-[#2C3338]/60">
                 How It Works
               </a>
-              <a href="#" className="block transition-colors hover:text-purple-400 text-gray-400">
+              <a href="#" className="block transition-colors hover:text-[#7AB8A8] text-[#2C3338]/60">
                 Pricing
               </a>
-              <a href="#" className="block transition-colors hover:text-purple-400 text-gray-400">
+              <a href="#" className="block transition-colors hover:text-[#7AB8A8] text-[#2C3338]/60">
                 Roadmap
               </a>
-              <a href="#" className="block transition-colors hover:text-purple-400 text-gray-400">
+              <a href="#" className="block transition-colors hover:text-[#7AB8A8] text-[#2C3338]/60">
                 API
               </a>
             </nav>
           </div>
 
           <div>
-            <h3 className="mb-4 text-lg font-semibold text-white">Resources</h3>
+            <h3 className="mb-4 text-lg font-semibold text-[#2C3338]">Resources</h3>
             <nav className="space-y-2 text-sm">
-              <a href="#" className="block transition-colors hover:text-purple-400 text-gray-400">
+              <a href="#" className="block transition-colors hover:text-[#7AB8A8] text-[#2C3338]/60">
                 Documentation
               </a>
-              <a href="#" className="block transition-colors hover:text-purple-400 text-gray-400">
+              <a href="#" className="block transition-colors hover:text-[#7AB8A8] text-[#2C3338]/60">
                 Tutorials
               </a>
-              <a href="#" className="block transition-colors hover:text-purple-400 text-gray-400">
+              <a href="#" className="block transition-colors hover:text-[#7AB8A8] text-[#2C3338]/60">
                 Community
               </a>
-              <a href="#" className="block transition-colors hover:text-purple-400 text-gray-400">
+              <a href="#" className="block transition-colors hover:text-[#7AB8A8] text-[#2C3338]/60">
                 Blog
               </a>
-              <a href="#" className="block transition-colors hover:text-purple-400 text-gray-400">
+              <a href="#" className="block transition-colors hover:text-[#7AB8A8] text-[#2C3338]/60">
                 Support
               </a>
             </nav>
           </div>
 
           <div className="relative">
-            <h3 className="mb-4 text-lg font-semibold text-white">Follow Us</h3>
+            <h3 className="mb-4 text-lg font-semibold text-[#2C3338]">Follow Us</h3>
             <div className="mb-6 flex space-x-4">
               <TooltipProvider>
                 <Tooltip>
@@ -130,7 +126,7 @@ function Footerdemo({ onSubscribe }: FooterdemoProps) {
                     <Button
                       variant="outline"
                       size="icon"
-                      className="rounded-full border-purple-500/30 text-purple-300 hover:bg-purple-500/10 hover:text-white bg-transparent"
+                      className="rounded-full border-[#A8C5D4]/40 text-[#7AB8A8] hover:bg-[#E8F0EC] hover:text-[#2C3338] bg-transparent"
                     >
                       <Github className="h-4 w-4" />
                       <span className="sr-only">GitHub</span>
@@ -148,7 +144,7 @@ function Footerdemo({ onSubscribe }: FooterdemoProps) {
                     <Button
                       variant="outline"
                       size="icon"
-                      className="rounded-full border-purple-500/30 text-purple-300 hover:bg-purple-500/10 hover:text-white bg-transparent"
+                      className="rounded-full border-[#A8C5D4]/40 text-[#7AB8A8] hover:bg-[#E8F0EC] hover:text-[#2C3338] bg-transparent"
                     >
                       <Twitter className="h-4 w-4" />
                       <span className="sr-only">Twitter</span>
@@ -166,7 +162,7 @@ function Footerdemo({ onSubscribe }: FooterdemoProps) {
                     <Button
                       variant="outline"
                       size="icon"
-                      className="rounded-full border-purple-500/30 text-purple-300 hover:bg-purple-500/10 hover:text-white bg-transparent"
+                      className="rounded-full border-[#A8C5D4]/40 text-[#7AB8A8] hover:bg-[#E8F0EC] hover:text-[#2C3338] bg-transparent"
                     >
                       <Discord className="h-4 w-4" />
                       <span className="sr-only">Discord</span>
@@ -184,7 +180,7 @@ function Footerdemo({ onSubscribe }: FooterdemoProps) {
                     <Button
                       variant="outline"
                       size="icon"
-                      className="rounded-full border-purple-500/30 text-purple-300 hover:bg-purple-500/10 hover:text-white bg-transparent"
+                      className="rounded-full border-[#A8C5D4]/40 text-[#7AB8A8] hover:bg-[#E8F0EC] hover:text-[#2C3338] bg-transparent"
                     >
                       <Mail className="h-4 w-4" />
                       <span className="sr-only">Email</span>
@@ -199,20 +195,20 @@ function Footerdemo({ onSubscribe }: FooterdemoProps) {
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-purple-500/20 pt-8 text-center md:flex-row">
-          <div className="flex items-center text-gray-400 text-sm">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-[#A8C5D4]/30 pt-8 text-center md:flex-row">
+          <div className="flex items-center text-[#2C3338]/60 text-sm">
             <span>© 2025 LUMORA. Made with</span>
-            <Heart className="w-4 h-4 mx-1 text-purple-400 fill-current" />
+            <Heart className="w-4 h-4 mx-1 text-[#8FBC8F] fill-current" />
             <span>for creators worldwide.</span>
           </div>
           <nav className="flex gap-4 text-sm">
-            <a href="#" className="transition-colors hover:text-purple-400 text-gray-400">
+            <a href="#" className="transition-colors hover:text-[#7AB8A8] text-[#2C3338]/60">
               Privacy Policy
             </a>
-            <a href="#" className="transition-colors hover:text-purple-400 text-gray-400">
+            <a href="#" className="transition-colors hover:text-[#7AB8A8] text-[#2C3338]/60">
               Terms of Service
             </a>
-            <a href="#" className="transition-colors hover:text-purple-400 text-gray-400">
+            <a href="#" className="transition-colors hover:text-[#7AB8A8] text-[#2C3338]/60">
               Cookie Policy
             </a>
           </nav>
