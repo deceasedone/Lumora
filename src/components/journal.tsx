@@ -106,8 +106,11 @@ export function Journal() {
           </div>
 
           {/* This container will grow and allow the editor to scroll */}
-          <div className="flex-1 overflow-y-auto mx-6 mt-3 mb-4 rounded-md border border-[var(--border)] bg-[var(--input)]/20">
-            <EditorContent editor={editor} />
+          <div
+            className="flex-1 overflow-y-auto mx-6 mt-3 mb-4 rounded-md border border-[var(--border)] bg-[var(--input)]/20 cursor-text"
+            onClick={() => editor?.commands.focus()}
+          >
+            <EditorContent editor={editor} className="h-full" />
           </div>        
         </div>
 

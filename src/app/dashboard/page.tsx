@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation"
 import { useCallback, useState } from "react"
 import { useAtom, useSetAtom } from "jotai"
 import { useTheme } from "next-themes"
-import { BookText, Focus, Volume2, Settings, Palette, User } from "lucide-react"
+import { BookText, Focus, Volume2, Settings, Palette, User, Users } from "lucide-react"
 
 // Import UI components for popups and dropdowns
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -88,6 +88,16 @@ function JournalNavButton() {
   return (
     <GradientNavButton title="Journal" gradientFrom="#FF9966" gradientTo="#FF5E62" onClick={() => setJournalOpen(true)}>
       <BookText className="h-4 w-4" />
+    </GradientNavButton>
+  )
+}
+
+// Lobby Button (moved here from the bottom-header row)
+function GradientLobbyButton() {
+  const router = useRouter()
+  return (
+    <GradientNavButton title="Lobby" gradientFrom="#4FACFE" gradientTo="#00F2FE" onClick={() => router.push("/lobby")}>
+      <Users className="h-4 w-4" />
     </GradientNavButton>
   )
 }
@@ -243,6 +253,7 @@ export default function DashboardPage() {
               <GradientAbsoluteFocusButton />
               <GradientAudioManagerButton />
               <JournalNavButton />
+              <GradientLobbyButton />
               <GradientUserSettingNavButton />
               <GradientThemeDropdown />
             </GradientNavWrapper>

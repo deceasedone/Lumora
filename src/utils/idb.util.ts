@@ -7,9 +7,9 @@ import { SessionData } from "@/components/stopwatch"
 import { Todo } from "@/utils/api"
 
 const DB_NAME = "lofi"
-const DB_VERSION = 1
+const DB_VERSION = 2
 
-export const STORES = ["session", "video", "goal", "todo"] as const
+export const STORES = ["session", "video", "goal", "todo", "settings"] as const
 const STORE_KEY = "items"
 
 export type IDB_STORES = (typeof STORES)[number]
@@ -261,5 +261,31 @@ export async function clearStoreByName(storeName: IDB_STORES): Promise<void> {
     await tx.done
   } catch {
     console.error("Couldnt clear data")
+  }
+}
+
+export async function getSetting<T>(key: string): Promise<T | null> {
+  try {
+    const db = await getDB()
+    const tx = db.transaction("settings", "readonly")
+    const store = tx.objectStore("settings")
+    const data = await store.get(key)
+    await tx.done
+    return (data ?? null) as T | null
+  } catch {
+    console.error(`COULD NOT GET SETTING "${key}"`)
+    return null
+  }
+}
+
+export async function setSetting<T>(key: string, value: T): Promise<void> {
+  try {
+    const db = await getDB()
+    const tx = db.transaction("settings", "readwrite")
+    const store = tx.objectStore("settings")
+    await store.put(value, key)
+    await tx.done
+  } catch {
+    console.error(`FAILED TO SET SETTING "${key}"`)
   }
 }

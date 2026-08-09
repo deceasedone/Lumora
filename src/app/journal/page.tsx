@@ -22,8 +22,9 @@ import { useRouter } from "next/navigation";
 interface JournalEntry {
   id: string
   title: string
-  date: string
-  updatedDate: string
+  date: string       // short display date
+  createdAt: string  // full ISO timestamp
+  updatedAt: string  // full ISO timestamp
   content: string // HTML content from Tiptap
 }
 
@@ -35,6 +36,23 @@ interface ApiJournalEntry {
   content: string
 }
 
+const formatTimestamp = (iso: string): string => {
+  if (!iso) return ""
+  return new Date(iso).toLocaleString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  })
+}
+
+const stripHtml = (html: string): string => {
+  if (typeof document === "undefined") return html.replace(/<[^>]*>/g, " ").trim()
+  const div = document.createElement("div")
+  div.innerHTML = html
+  return (div.textContent || div.innerText || "").replace(/\s+/g, " ").trim()
+}
 // ------------------------------------------------------------------
 // PDF Generation: Browser Print-Based with Clean Formatting
 // ------------------------------------------------------------------
@@ -344,10 +362,11 @@ export default function JournalPage() {
             id: e.id,
             title: e.title,
             date: e.created_at ? new Date(e.created_at).toISOString().split("T")[0] : "",
-            updatedDate: e.updated_at ? new Date(e.updated_at).toISOString().split("T")[0] : "",
+            createdAt: e.created_at || "",
+            updatedAt: e.updated_at || e.created_at || "",
             content: e.content,
           }))
-          .sort((a, b) => a.date.localeCompare(b.date));
+          .sort((a, b) => a.createdAt.localeCompare(b.createdAt));
         setEntries(journalEntries);        if (apiEntries.length) setSelectedId(apiEntries[0].id);
       } catch (error) {
         console.error("Failed to load journal entries:", error);
@@ -384,10 +403,10 @@ export default function JournalPage() {
         id: apiEntry.id,
         title: apiEntry.title,
         date: apiEntry.created_at ? new Date(apiEntry.created_at).toISOString().split("T")[0] : "",
-        updatedDate: apiEntry.created_at ? new Date(apiEntry.created_at).toISOString().split("T")[0] : "",
+        createdAt: apiEntry.created_at || "",
+        updatedAt: apiEntry.updated_at || apiEntry.created_at || "",
         content: apiEntry.content,
-      };
-      
+      };      
       setEntries(prev => [...prev, newJournalEntry]);
       setSelectedId(apiEntry.id);
     } catch (error) {
@@ -413,7 +432,8 @@ export default function JournalPage() {
               title: updated.title,
               content: updated.content,
               date: updated.created_at ? new Date(updated.created_at).toISOString().split("T")[0] : e.date,
-              updatedDate: updated.updated_at ? new Date(updated.updated_at).toISOString().split("T")[0] : e.updatedDate,
+              createdAt: updated.created_at || e.createdAt,
+              updatedAt: updated.updated_at || e.updatedAt,
             } 
           : e
         )
@@ -487,19 +507,21 @@ export default function JournalPage() {
         <aside className="flex flex-col gap-2 rounded-lg border border-[var(--border)] bg-[var(--card)] p-2 md:col-span-1">
           {entries.length === 0 && (<div className="p-4 text-center text-sm text-[var(--muted-foreground)]">No entries yet. Create one!</div>)}
           {entries.map(entry => {
-            const teaser = entry.content.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim().slice(0, 80)
+            const plainText = stripHtml(entry.content)
+            const teaser = plainText.slice(0, 80)
+            const wasEdited = entry.updatedAt && entry.createdAt && entry.updatedAt !== entry.createdAt
             return (
               <button key={entry.id} onClick={() => setSelectedId(entry.id)} className={`w-full rounded-md border border-[var(--border)] p-3 text-left text-sm transition-colors ${selectedId === entry.id ? "bg-[var(--primary)] text-[var(--primary-foreground)]" : "hover:bg-[var(--accent)]"}`}>
                 <h3 className="font-semibold">{entry.title}</h3>
                 {teaser && (
                   <p className={`mt-1 line-clamp-2 text-xs ${selectedId === entry.id ? "text-[var(--primary-foreground)]/80" : "text-[var(--muted-foreground)]"}`}>
-                    {teaser}{entry.content.replace(/<[^>]*>/g, "").length > 80 ? "…" : ""}
+                    {teaser}{plainText.length > 80 ? "…" : ""}
                   </p>
                 )}
-                <div className="mt-2 flex items-center justify-between">
-                  <span className={`text-[10px] ${selectedId === entry.id ? "text-[var(--primary-foreground)]/70" : "text-[var(--muted-foreground)]"}`}>{entry.date}</span>
-                  {entry.updatedDate && entry.updatedDate !== entry.date && (
-                    <span className={`text-[10px] italic ${selectedId === entry.id ? "text-[var(--primary-foreground)]/70" : "text-[var(--muted-foreground)]"}`}>Modified {entry.updatedDate}</span>
+                <div className="mt-2 flex flex-col gap-0.5">
+                  <span className={`text-[10px] ${selectedId === entry.id ? "text-[var(--primary-foreground)]/70" : "text-[var(--muted-foreground)]"}`}>{formatTimestamp(entry.createdAt)}</span>
+                  {wasEdited && (
+                    <span className={`text-[10px] italic ${selectedId === entry.id ? "text-[var(--primary-foreground)]/70" : "text-[var(--muted-foreground)]"}`}>Modified {formatTimestamp(entry.updatedAt)}</span>
                   )}
                 </div>
               </button>
@@ -514,10 +536,16 @@ export default function JournalPage() {
               <Button onClick={handleDownloadSingle} variant="ghost" size="icon" title="Download PDF" disabled={isDownloading}><Download className="h-5 w-5" /></Button>
               <Button variant="ghost" size="icon" onClick={() => deleteEntryHandler(selectedEntry.id)} title="Delete" disabled={isDownloading}><Trash2 className="h-5 w-5" /></Button>
             </div>
-            <div className="flex-1 overflow-y-auto p-4">
-              <EditorContent editor={editor} className="prose prose-sm max-w-none" onBlur={() => updateEntry({ content: editor?.getHTML() || "" })} />
-            </div>
-          </section>
+            <div
+              className="flex-1 overflow-y-auto p-4 cursor-text"
+              onClick={() => editor?.commands.focus()}
+            >
+              <EditorContent
+                editor={editor}
+                className="prose prose-sm max-w-none h-full min-h-[400px] text-[var(--foreground)] [&_.ProseMirror]:h-full [&_.ProseMirror]:min-h-[400px] [&_.ProseMirror]:outline-none [&_p.is-editor-empty:first-child::before]:text-[var(--muted-foreground)] [&_p.is-editor-empty:first-child::before]:opacity-70"
+                onBlur={() => updateEntry({ content: editor?.getHTML() || "" })}
+              />
+            </div>          </section>
         ) : (
           <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[var(--border)] bg-[var(--card)] md:col-span-3">
             <FileText className="h-12 w-12 text-[var(--muted-foreground)]" />

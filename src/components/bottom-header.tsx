@@ -2,11 +2,11 @@
 
 import { useAtomValue } from "jotai"
 import { dailyGoalAtom, timerAtom } from "@/context/data"
-import { useRouter } from "next/navigation"
 import { Progress } from "./ui/progress"
 import { DailyGoalDrawerTrigger } from "./overlay"
-import { RetroVideoPlayer } from "./retro-video-player"
-import { BreathingMeditation } from "./breathing-meditation"
+import { DaylightWidget } from "./dashboard-widgets/daylight-widget"
+import { YearWidget } from "./dashboard-widgets/year-widget"
+import { WorldClockWidget } from "./dashboard-widgets/world-clock-widget"
 import { GradientNavButton } from "./ui/gradient-nav-button"
 import { Zap, Shuffle } from "lucide-react"
 import { showMotivationToast, showFactToast } from "./popups"
@@ -14,18 +14,21 @@ import { showMotivationToast, showFactToast } from "./popups"
 export function BottomHeader() {
   const dailyGoal = useAtomValue(dailyGoalAtom)
   const timer = useAtomValue(timerAtom)
-  const router = useRouter()
   const progress = dailyGoal > 0 ? Math.min((timer / dailyGoal) * 100, 100) : 0
 
   return (
     <div className="relative flex w-full flex-col justify-center">
       <div className="flex w-full items-center gap-4 ">
-        {/* 1. Video Player (increased height to match breathing component) */}
-        <div className="flex-1 h-full max-w-[500px]">
-          <RetroVideoPlayer  />
+        {/* 1–3. Daylight, Year, and World Clock */}
+        <div className="flex flex-1 items-stretch gap-3 max-w-[700px]">
+          <div className="flex-1 min-w-0">
+            <DaylightWidget />
+          </div>
+          <div className="flex-1 min-w-0">
+            <YearWidget />
+          </div>
+          <WorldClockWidget />
         </div>
-        {/* 2. Breathing Meditation (immediately to the right) */}
-        <BreathingMeditation />
         {/* 3. Summon Button with Motivate and Surprise below */}
         <div className="flex flex-col items-center">
           <button
@@ -42,20 +45,6 @@ export function BottomHeader() {
               <Shuffle className="h-4 w-4" />
             </GradientNavButton>
           </div>
-        </div>
-        {/* Lobby Button */}
-        <div className="flex items-center ml-5">
-          <button
-            className="w-16 h-16 rounded-lg bg-[var(--primary)] text-[var(--primary-foreground)] font-semibold shadow-lg transition-all duration-200 border-2 border-[var(--border)] hover:scale-105 hover:border-[var(--accent)] hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/60 focus:ring-offset-2 flex flex-col items-center justify-center gap-1"
-            onClick={() => router.push('/lobby')}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
-              <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z" />
-              <path d="M3 9V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4" />
-              <path d="M12 12h.01" />
-            </svg>
-            <span className="text-xs tracking-wide">Lobby</span>
-          </button>
         </div>
         {/* 4. Daily Goal Progress (moved to far right) */}
         {dailyGoal > 0 && (
