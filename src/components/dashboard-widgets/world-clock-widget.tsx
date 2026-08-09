@@ -105,14 +105,14 @@ export function WorldClockWidget() {
 
   if (!locations || !now) {
     return (
-      <div className="rounded-[var(--radius)] p-4 bg-[var(--card)] border border-[var(--border)] flex items-center justify-center h-40 w-56 shrink-0">
+      <div className="rounded-[var(--radius)] p-3 sm:p-4 bg-[var(--card)] border border-[var(--border)] flex items-center justify-center h-full w-56 shrink-0">
         <span className="text-xs text-[var(--muted-foreground)]">Loading…</span>
       </div>
     )
   }
 
   return (
-    <div className="rounded-[var(--radius)] p-4 bg-[var(--card)] border border-[var(--border)] flex flex-col gap-2 w-56 shrink-0 overflow-hidden">
+    <div className="rounded-[var(--radius)] p-3 sm:p-4 bg-[var(--card)] border border-[var(--border)] flex flex-col gap-2 h-full w-56 shrink-0 overflow-hidden">
       <div className="flex items-center justify-between">
         <span className="text-sm font-medium text-[var(--card-foreground)]">World Clock</span>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -169,7 +169,7 @@ export function WorldClockWidget() {
         </Dialog>
       </div>
 
-      <div className="flex-1 overflow-y-auto flex flex-col gap-1.5 pr-1">
+      <div className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-1.5 pr-1 pb-1">
         {locations.map((loc) => {
           const dayOffset = getDayOffset(now, loc.timezone)
           return (

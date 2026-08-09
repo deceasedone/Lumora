@@ -1,6 +1,7 @@
 "use client"
 
 import { cn } from "@/lib/utils"
+import React from "react"
 
 interface DotGridProgressProps {
   total: number
@@ -9,10 +10,11 @@ interface DotGridProgressProps {
   caption?: string
   footerLeft?: string
   footerRight?: string
-  size?: "sm" | "lg"
+  size?: "xs" | "sm" | "md" | "lg"
   todayIndex?: number
   dotTitle?: (index: number) => string
   className?: string
+  headerRight?: React.ReactNode
 }
 
 export function DotGridProgress({
@@ -22,29 +24,46 @@ export function DotGridProgress({
   caption,
   footerLeft,
   footerRight,
-  size = "lg",
+  size = "xs",
   todayIndex,
   dotTitle,
   className,
+  headerRight
 }: DotGridProgressProps) {
   const dots = Array.from({ length: total })
-  const dotSize = size === "lg" ? "w-2.5 h-2.5" : "w-1.5 h-1.5"
-  const gap = size === "lg" ? "gap-1.5" : "gap-1"
+  
+  // Perfectly calibrated sizes so they fill the space without causing a scrollbar
+  const dotSize = 
+    size === "lg" ? "w-8 h-8 sm:w-10 sm:h-10" :       // Week (7 dots)
+    size === "md" ? "w-4 h-4 sm:w-5 sm:h-5" :         // Day (24 dots)
+    size === "sm" ? "w-2.5 h-2.5 sm:w-3 sm:h-3" :     // Hour (60 dots) - Significantly larger now!
+    "w-[3px] h-[3px] sm:w-[3.5px] sm:h-[3.5px]"       // Year (365 dots)
+    
+  const gap = 
+    size === "lg" ? "gap-3 sm:gap-4" : 
+    size === "md" ? "gap-1.5 sm:gap-2" : 
+    size === "sm" ? "gap-1 sm:gap-1.5" : 
+    "gap-[2px]"
 
   return (
     <div
       className={cn(
-        "rounded-[var(--radius)] p-5 bg-[var(--card)] border border-[var(--border)] flex flex-col justify-between",
-        size === "lg" ? "aspect-[4/3]" : "aspect-square",
+        // Reduced top/bottom padding to give the grid more vertical room
+        "rounded-[var(--radius)] p-2 px-3 bg-[var(--card)] border border-[var(--border)] flex flex-col h-full w-full overflow-hidden",
         className,
       )}
     >
-      <div>
-        <div className="text-sm font-medium text-[var(--card-foreground)]">{title}</div>
-        {caption && <div className="text-xs text-[var(--muted-foreground)]">{caption}</div>}
+      {/* HEADER: Smaller fonts, tighter margins */}
+      <div className="flex items-center justify-between mb-1.5 shrink-0">
+        <div className="flex items-baseline gap-1.5 overflow-hidden">
+          <span className="text-[12px] font-bold text-[var(--card-foreground)] whitespace-nowrap">{title}</span>
+          {caption && <span className="text-[9.5px] font-medium text-[var(--muted-foreground)] truncate">{caption}</span>}
+        </div>
+        {headerRight && <div className="shrink-0 ml-2">{headerRight}</div>}
       </div>
 
-      <div className={cn("flex flex-wrap content-start overflow-hidden", gap)}>
+      {/* DOT GRID: overflow-hidden prevents the scrollbar, content-start packs them perfectly */}
+      <div className={cn("flex-1 overflow-hidden flex flex-wrap content-start", gap)}>
         {dots.map((_, i) => (
           <div
             key={i}
@@ -62,8 +81,9 @@ export function DotGridProgress({
         ))}
       </div>
 
+      {/* FOOTER: Reduced padding above the text, smaller font size */}
       {(footerLeft || footerRight) && (
-        <div className="flex justify-between text-xs text-[var(--muted-foreground)] pt-2">
+        <div className="flex justify-between text-[8.5px] tracking-wide font-medium text-[var(--muted-foreground)] pt-1 mt-auto shrink-0 border-t border-[var(--border)]/40">
           <span>{footerLeft}</span>
           <span>{footerRight}</span>
         </div>

@@ -147,6 +147,7 @@ function TimeDisplay({ displayValues }: TimeDisplayProps) {
 
 export function DailyGoalDrawerTrigger() {
   const [goal, setGoal] = useAtom(dailyGoalAtom)
+  const timer = useAtomValue(timerAtom)
   const [isOpen, setIsOpen] = useState(false)
 
   const form = useForm({
@@ -168,18 +169,55 @@ export function DailyGoalDrawerTrigger() {
     toast.success("Daily goal updated!")
   }
 
+  // Calculate SVG ring progress
+  const percent = goal > 0 ? Math.min((timer / goal) * 100, 100) : 0
+  const radius = 42 // Larger radius for a prominent circle
+  const circumference = 2 * Math.PI * radius
+  const strokeDashoffset = circumference - (percent / 100) * circumference
+
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild>
-        <Button
-          variant="outline"
-          className="group relative h-16 w-16 rounded-full p-0 transition-colors hover:bg-muted/50 bg-transparent"
+        <button
+          className="group relative h-20 w-20 sm:h-24 sm:w-24 rounded-full p-0 bg-transparent hover:scale-105 transition-transform duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
         >
-          <div className="flex h-full w-full flex-col items-center justify-center rounded-full border-2 border-border/50 transition-colors group-hover:border-primary">
-            <span className="text-2xl font-bold text-primary">{goal > 0 ? goal / ONE_HOUR : "-"}</span>
-            <span className="text-xs font-medium uppercase text-muted-foreground">Goal</span>
+          {/* Large Double Ring Loader */}
+          <svg className="absolute inset-0 h-full w-full -rotate-90 drop-shadow-sm" viewBox="0 0 100 100">
+            {/* Background Track */}
+            <circle
+              className="stroke-[var(--border)] transition-colors group-hover:stroke-[var(--muted-foreground)]/30"
+              strokeWidth="6"
+              fill="transparent"
+              r={radius}
+              cx="50"
+              cy="50"
+            />
+            {/* Active Progress Track */}
+            <circle
+              className="stroke-[var(--primary)] transition-all duration-700 ease-in-out"
+              strokeWidth="6"
+              strokeLinecap="round"
+              fill="transparent"
+              r={radius}
+              cx="50"
+              cy="50"
+              style={{
+                strokeDasharray: circumference,
+                strokeDashoffset: strokeDashoffset,
+              }}
+            />
+          </svg>
+          
+          {/* Centered Text */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center pt-[2px]">
+            <span className="text-[26px] sm:text-[32px] font-bold text-[var(--primary)] leading-none tracking-tight">
+              {goal > 0 ? goal / ONE_HOUR : "-"}
+            </span>
+            <span className="text-[9px] sm:text-[10px] font-bold uppercase text-[var(--muted-foreground)] mt-1 tracking-widest">
+              Goal
+            </span>
           </div>
-        </Button>
+        </button>
       </DrawerTrigger>
       <DrawerContent className="p-6">
         <div className="mx-auto w-full max-w-md">
