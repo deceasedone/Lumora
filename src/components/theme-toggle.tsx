@@ -24,7 +24,7 @@ export function ThemeDropdown({
   const { setTheme, theme } = useTheme()
   const [previewTheme, setPreviewTheme] = useState<string | null>(null)
   const [isOpen, setIsOpen] = useState(false)
-  const originalTheme = useRef<string | undefined>(null)
+  const originalTheme = useRef<string | undefined>(undefined)
 
   useEffect(() => {
     if (isOpen) {

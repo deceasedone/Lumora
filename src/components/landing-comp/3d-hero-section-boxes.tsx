@@ -8,10 +8,13 @@ import { Play, Pause, Volume2, Sparkles } from "lucide-react"
 import { LumoraLogo } from "../lumora"
 
 // Load Spline on client only and code-split it out of the initial bundle
-const SplineComponent = dynamic(() => import("@splinetool/react-spline"), {
-  ssr: false,
-  // Rendering placeholder handled inside HeroSplineBackground for full-height loader
-})
+const SplineComponent = dynamic(
+  () => import("@splinetool/react-spline"),
+  {
+    ssr: false,
+    // Rendering placeholder handled inside HeroSplineBackground for full-height loader
+  }
+)
 
 // --- Lazy-loaded HeroSplineBackground ---
 // The Spline component is heavy. We create a separate component for it
@@ -147,7 +150,7 @@ function HeroSplineLoader() {
 // These components are wrapped in React.memo to prevent re-rendering
 // unless their props change.
 
-const ScreenshotSection = React.memo(function ScreenshotSection({ screenshotRef }: { screenshotRef: React.RefObject<HTMLDivElement | null> }) {
+const ScreenshotSection = React.memo(function ScreenshotSection({ screenshotRef }: { screenshotRef: React.RefObject<HTMLDivElement> }) {
   return (
     <section className="relative z-10 container mx-auto px-4 md:px-6 lg:px-8 mt-11 md:mt-12">
       <div
@@ -277,8 +280,8 @@ const HeroSection = ({
   onGetStarted,
   onAuthClick,
 }: { onGetStarted: () => void; onAuthClick: (type: "login" | "signup") => void }) => {
-  const screenshotRef = useRef<HTMLDivElement>(null)
-  const heroContentRef = useRef<HTMLDivElement>(null)
+  const screenshotRef = useRef<HTMLDivElement>(null!)
+  const heroContentRef = useRef<HTMLDivElement>(null!)
 
   // Optimized scroll handler with throttling for better Chrome performance
   useEffect(() => {

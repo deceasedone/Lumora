@@ -2,8 +2,7 @@
 'use client';
 
 import { useState, useRef, useCallback, useEffect } from 'react';
-import YouTube from 'react-youtube';
-import type { YouTubePlayer } from 'react-youtube';
+import YouTube, { type YouTubeEvent, type YouTubePlayer } from 'react-youtube';
 // FIX: Import useConnectionState hook and ConnectionState enum
 import { useDataChannel, useLocalParticipant, useParticipants, useConnectionState } from '@livekit/components-react';
 import { ConnectionState } from 'livekit-client';
@@ -108,7 +107,7 @@ export default function SharedYoutubePlayer() {
       <div style={{ position: 'relative', paddingTop: '56.25%' }}>
         <YouTube
           videoId={videoId}
-          onReady={(e) => {
+          onReady={(e: YouTubeEvent) => {
             playerRef.current = e.target;
             // FIX: Set the player as ready.
             setIsPlayerReady(true);
