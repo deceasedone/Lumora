@@ -32,7 +32,7 @@ import { Slider } from "./ui/slider"
 export function PlayerControls({
   playerRef,
 }: {
-  playerRef: RefObject<any>
+  playerRef: RefObject<HTMLVideoElement | null>
 }) {
   const [isPlaying, setIsPlaying] = useAtom(isMediaPlayingAtom)
   const [volume, setVolume] = useAtom(playerVolumeAtom)

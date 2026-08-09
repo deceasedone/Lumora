@@ -25,7 +25,7 @@ export function Player({ hidden = false }: { hidden?: boolean }) {
   const setVideoProgress = useSetAtom(MediaProgressAtom)
   const setMediaDuration = useSetAtom(MediaDurationAtom)
   const [isMediaPlaying, setIsMediaPlaying] = useAtom(isMediaPlayingAtom)
-  const playerRef = useRef<any>(null)
+  const playerRef = useRef<HTMLVideoElement | null>(null)
 
   if (!currentChannel) {
     return null
