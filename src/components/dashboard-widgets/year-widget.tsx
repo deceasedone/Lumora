@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { DotGridProgress } from "../dashboard-widgets" // Ensure correct path!
+import { DotGridProgress } from "./dot-progress" // Ensure correct path!
 import { ArrowRightLeft } from "lucide-react"
 
 function isLeapYear(year: number) {

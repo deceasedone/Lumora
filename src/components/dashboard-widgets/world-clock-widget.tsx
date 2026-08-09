@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input"
 import { TIMEZONE_CITIES, getLocalTimezoneCity, type CityTimezone } from "@/data/timezones"
 import { getSetting, setSetting } from "@/utils/idb.util"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 const SETTING_KEY = "worldClockLocations"
 const MAX_VISIBLE = 6
@@ -112,7 +113,7 @@ export function WorldClockWidget() {
   }
 
   return (
-    <div className="rounded-[var(--radius)] p-3 sm:p-4 bg-[var(--card)] border border-[var(--border)] flex flex-col gap-2 h-full w-56 shrink-0 overflow-hidden">
+    <div className="rounded-[var(--radius)] p-2 sm:p-3 bg-[var(--card)] border border-[var(--border)] flex flex-col gap-1.5 h-full w-56 shrink-0 overflow-hidden">
       <div className="flex items-center justify-between">
         <span className="text-sm font-medium text-[var(--card-foreground)]">World Clock</span>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -139,75 +140,79 @@ export function WorldClockWidget() {
                 className="pl-9"
               />
             </div>
-            <div className="max-h-72 overflow-y-auto flex flex-col gap-1">
-              {filtered.map((city) => {
-                const alreadyAdded = locations.some(
-                  (l) => l.timezone === city.timezone && l.city === city.city,
-                )
-                return (
-                  <button
-                    key={`${city.city}-${city.timezone}`}
-                    onClick={() => {
-                      addLocation(city)
-                      setDialogOpen(false)
-                      setSearch("")
-                    }}
-                    disabled={alreadyAdded || locations.length >= MAX_VISIBLE}
-                    className="flex items-center gap-2 rounded-[var(--radius)] px-3 py-2 text-left text-sm hover:bg-[var(--muted)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                  >
-                    <span>{city.flag}</span>
-                    <span className="text-[var(--card-foreground)]">{city.city}</span>
-                    <span className="text-[var(--muted-foreground)] text-xs ml-auto">{city.country}</span>
-                  </button>
-                )
-              })}
-              {filtered.length === 0 && (
-                <div className="text-center text-xs text-[var(--muted-foreground)] py-6">No matches</div>
-              )}
-            </div>
+            <ScrollArea className="h-72">
+              <div className="flex flex-col gap-1 pr-3">
+                {filtered.map((city) => {
+                  const alreadyAdded = locations.some(
+                    (l) => l.timezone === city.timezone && l.city === city.city,
+                  )
+                  return (
+                    <button
+                      key={`${city.city}-${city.timezone}`}
+                      onClick={() => {
+                        addLocation(city)
+                        setDialogOpen(false)
+                        setSearch("")
+                      }}
+                      disabled={alreadyAdded || locations.length >= MAX_VISIBLE}
+                      className="flex items-center gap-2 rounded-[var(--radius)] px-3 py-2 text-left text-sm hover:bg-[var(--muted)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                    >
+                      <span>{city.flag}</span>
+                      <span className="text-[var(--card-foreground)]">{city.city}</span>
+                      <span className="text-[var(--muted-foreground)] text-xs ml-auto">{city.country}</span>
+                    </button>
+                  )
+                })}
+                {filtered.length === 0 && (
+                  <div className="text-center text-xs text-[var(--muted-foreground)] py-6">No matches</div>
+                )}
+              </div>
+            </ScrollArea>
           </DialogContent>
         </Dialog>
       </div>
 
-      <div className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-1.5 pr-1 pb-1">
-        {locations.map((loc) => {
-          const dayOffset = getDayOffset(now, loc.timezone)
-          return (
-            <div key={`${loc.city}-${loc.timezone}`} className="flex items-center justify-between group">
-              <div className="flex items-center gap-1.5 min-w-0">
-                <span>{loc.flag}</span>
-                <div className="min-w-0">
-                  <div className="text-xs font-medium text-[var(--card-foreground)] truncate">{loc.city}</div>
-                  <div className="text-[10px] text-[var(--muted-foreground)] truncate">
-                    {loc.country} · {formatOffsetFor(now, loc.timezone)}
+      <ScrollArea className="flex-1 min-h-0">
+        <div className="flex flex-col gap-1 pr-2">
+          {locations.map((loc) => {
+            const dayOffset = getDayOffset(now, loc.timezone)
+            return (
+              <div key={`${loc.city}-${loc.timezone}`} className="flex items-center justify-between group">
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <span className="text-xs">{loc.flag}</span>
+                  <div className="min-w-0">
+                    <div className="text-[11px] font-medium text-[var(--card-foreground)] truncate leading-tight">{loc.city}</div>
+                    <div className="text-[9px] text-[var(--muted-foreground)] truncate leading-tight">
+                      {loc.country} · {formatOffsetFor(now, loc.timezone)}
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-1 shrink-0">
-                <div className="text-right">
-                  <div className="text-sm font-mono text-[var(--card-foreground)]">
-                    {formatClockFor(now, loc.timezone)}
-                  </div>
-                  {dayOffset !== 0 && (
-                    <div className="text-[9px] text-[var(--accent)]">
-                      {dayOffset === 1 ? "Tomorrow" : "Yesterday"}
+                <div className="flex items-center gap-1 shrink-0">
+                  <div className="text-right">
+                    <div className="text-xs font-mono text-[var(--card-foreground)] leading-tight">
+                      {formatClockFor(now, loc.timezone)}
                     </div>
+                    {dayOffset !== 0 && (
+                      <div className="text-[8px] text-[var(--accent)] leading-tight">
+                        {dayOffset === 1 ? "Tomorrow" : "Yesterday"}
+                      </div>
+                    )}
+                  </div>
+                  {locations.length > 1 && (
+                    <button
+                      onClick={() => removeLocation(loc)}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity w-4 h-4 flex items-center justify-center text-[var(--muted-foreground)] hover:text-[var(--destructive)]"
+                      aria-label={`Remove ${loc.city}`}
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
                   )}
                 </div>
-                {locations.length > 1 && (
-                  <button
-                    onClick={() => removeLocation(loc)}
-                    className="opacity-0 group-hover:opacity-100 transition-opacity w-4 h-4 flex items-center justify-center text-[var(--muted-foreground)] hover:text-[var(--destructive)]"
-                    aria-label={`Remove ${loc.city}`}
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                )}
               </div>
-            </div>
-          )
-        })}
-      </div>
+            )
+          })}
+        </div>
+      </ScrollArea>
     </div>
   )
 }

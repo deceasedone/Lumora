@@ -112,44 +112,58 @@ export function DaylightWidget() {
       </div>
     )
   } else {
-    const { sunrise, sunset } = sun
-    const totalDaylight = sunset.getTime() - sunrise.getTime()
-    const isBeforeSunrise = now < sunrise
-    const isAfterSunset = now > sunset
+    const { sunrise: todaySunrise, sunset: todaySunset } = sun
+    const isDaytime = now >= todaySunrise && now <= todaySunset
 
-    let percent: number
-    let remainingLabel: string
+    let arcStart: Date
+    let arcEnd: Date
 
-    if (isBeforeSunrise) {
-      percent = 0
-      remainingLabel = `Sunrise in ${formatDuration(sunrise.getTime() - now.getTime())}`
-    } else if (isAfterSunset) {
-      percent = 100
-      remainingLabel = "Night"
+    if (isDaytime) {
+      arcStart = todaySunrise
+      arcEnd = todaySunset
+    } else if (now < todaySunrise) {
+      // Still night — arc runs from YESTERDAY's sunset to TODAY's sunrise
+      const yesterday = new Date(now)
+      yesterday.setDate(yesterday.getDate() - 1)
+      const yesterdaySun = getSunTimes(yesterday, coords.lat, coords.lng)
+      arcStart = yesterdaySun.sunset ?? new Date(todaySunrise.getTime() - 12 * 60 * 60 * 1000)
+      arcEnd = todaySunrise
     } else {
-      const elapsed = now.getTime() - sunrise.getTime()
-      percent = Math.min(100, Math.max(0, (elapsed / totalDaylight) * 100))
-      remainingLabel = `${formatDuration(sunset.getTime() - now.getTime())} left`
+      // After sunset — arc runs from TODAY's sunset to TOMORROW's sunrise
+      const tomorrow = new Date(now)
+      tomorrow.setDate(tomorrow.getDate() + 1)
+      const tomorrowSun = getSunTimes(tomorrow, coords.lat, coords.lng)
+      arcStart = todaySunset
+      arcEnd = tomorrowSun.sunrise ?? new Date(todaySunset.getTime() + 12 * 60 * 60 * 1000)
     }
 
-    // New Header Right with the Moon Icon!
+    const totalSpan = arcEnd.getTime() - arcStart.getTime()
+    const elapsed = now.getTime() - arcStart.getTime()
+    const percent = totalSpan > 0 ? Math.min(100, Math.max(0, (elapsed / totalSpan) * 100)) : 0
+    const remainingLabel = isDaytime
+      ? `${formatDuration(arcEnd.getTime() - now.getTime())} left`
+      : `${formatDuration(arcEnd.getTime() - now.getTime())} to sunrise`
+
     headerRight = (
       <div className="flex items-center gap-1.5 text-xs font-medium text-[var(--muted-foreground)]">
-        <span>{remainingLabel}</span>
-        <Moon className="w-3.5 h-3.5 text-indigo-400" />
+        <span>{isDaytime ? "Day" : "Night"} · {remainingLabel}</span>
+        {isDaytime ? (
+          <Sun className="w-3.5 h-3.5 text-orange-400" />
+        ) : (
+          <Moon className="w-3.5 h-3.5 text-indigo-400" />
+        )}
       </div>
     )
 
     // Calculate arc positioning (0 to 100 for X, sine wave for Y)
-    const sunX = percent;
-    // Map 0-100 to 0-PI. Height peaks dynamically.
-    const sunY = Math.sin((percent / 100) * Math.PI) * 80;
+    const arcX = percent
+    const arcY = Math.sin((percent / 100) * Math.PI) * 80
 
     content = (
       <div className="flex-1 flex flex-col justify-end mt-2 relative min-h-[50px]">
         {/* The Sky/Arc Scene */}
         <div className="relative w-full h-full flex-1 mb-1">
-          {/* Sun Path Arc */}
+          {/* Path Arc */}
           <svg 
             className="absolute bottom-0 w-full h-[150%] text-[var(--muted-foreground)]/20 pointer-events-none" 
             preserveAspectRatio="none" 
@@ -158,23 +172,25 @@ export function DaylightWidget() {
             <path d="M 0 50 Q 50 -10 100 50" fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="2 2" />
           </svg>
           
-          {/* Moving Sun on the Arc */}
+          {/* Moving Sun/Moon on the Arc */}
           <div 
             className="absolute flex items-center justify-center z-10"
             style={{ 
-              left: `calc(${sunX}% - 12px)`, // Center the icon
-              bottom: `calc(${sunY}%)`, 
+              left: `calc(${arcX}% - 12px)`, // Center the icon
+              bottom: `calc(${arcY}%)`, 
               transition: "all 1s ease-out"
             }}
           >
-            <Sun className={cn(
-              "w-6 h-6 text-orange-400 drop-shadow-md", 
-              !reducedMotion && !isBeforeSunrise && !isAfterSunset && "animate-[spin_10s_linear_infinite]",
-              (isBeforeSunrise || isAfterSunset) && "opacity-40" // Dim it at night
-            )} />
+            {isDaytime ? (
+              <Sun className={cn(
+                "w-6 h-6 text-orange-400 drop-shadow-md",
+                !reducedMotion && "animate-[spin_10s_linear_infinite]"
+              )} />
+            ) : (
+              <Moon className="w-6 h-6 text-indigo-300 drop-shadow-md" />
+            )}
           </div>
         </div>
-
         {/* Ground / Horizon Line (Trees sit exactly ON this line now) */}
         <div className="relative h-4 border-b-[1.5px] border-[var(--border)]">
           <TreePine className="w-4 h-4 text-emerald-600/70 absolute bottom-0 left-[15%]" />
@@ -184,9 +200,9 @@ export function DaylightWidget() {
         
         {/* Times physically placed BELOW the ground line so they don't overlap */}
         <div className="flex w-full justify-between text-[10px] text-[var(--muted-foreground)] font-mono pt-1.5 px-1">
-          <span>{formatClock(sunrise)}</span>
+          <span>{formatClock(arcStart)}</span>
           <span className="text-[var(--card-foreground)] font-bold">{formatClock(now)}</span>
-          <span>{formatClock(sunset)}</span>
+          <span>{formatClock(arcEnd)}</span>
         </div>
       </div>
     )
@@ -195,7 +211,6 @@ export function DaylightWidget() {
   return (
     <div className="rounded-[var(--radius)] p-3 sm:p-4 bg-[var(--card)] border border-[var(--border)] flex flex-col gap-1 h-full w-full overflow-hidden">
       <div className="flex items-center justify-between mb-1">
-        {/* Adjusted to font-medium to match right side */}
         <div className="flex items-center gap-1.5 text-sm font-medium text-[var(--card-foreground)]">
           <Sun className="w-4 h-4 text-orange-400" />
           Daylight
