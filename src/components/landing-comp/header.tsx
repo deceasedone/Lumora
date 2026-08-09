@@ -12,7 +12,7 @@ export function Header({ onAuthClick }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   return (
-    <header className="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-xl border-b border-purple-500/20">
+    <header className="fixed top-0 w-full z-50 bg-black/70 backdrop-blur-xl border-b border-purple-500/20">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
@@ -31,7 +31,7 @@ export function Header({ onAuthClick }: HeaderProps) {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden md:flex items-center space-x-8" role="navigation" aria-label="Main navigation">
             <a
               href="#features"
               className="text-gray-300 hover:text-purple-400 transition-all duration-300 relative group"
@@ -56,13 +56,13 @@ export function Header({ onAuthClick }: HeaderProps) {
             <Button
               variant="ghost"
               onClick={() => onAuthClick("login")}
-              className="text-gray-300 hover:text-purple-400 hover:bg-purple-500/10"
+              className="text-white hover:text-white hover:bg-purple-500/10 focus:ring-2 focus:ring-purple-400"
             >
               Login
             </Button>
             <Button
               onClick={() => onAuthClick("signup")}
-              className="bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:from-purple-600 hover:to-blue-600 shadow-lg shadow-purple-500/25 border-0"
+              className="bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700 shadow-lg shadow-purple-600/25 border-0 px-4 py-2"
             >
               Get Started
             </Button>
@@ -72,7 +72,8 @@ export function Header({ onAuthClick }: HeaderProps) {
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden text-purple-400"
+            className="md:hidden text-white"
+            aria-label="Toggle menu"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? <X /> : <Menu />}
@@ -81,27 +82,27 @@ export function Header({ onAuthClick }: HeaderProps) {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <nav className="md:hidden mt-4 pb-4 border-t border-purple-500/20 pt-4">
+          <nav className="md:hidden mt-4 pb-4 border-t border-purple-500/20 pt-4" role="navigation" aria-label="Mobile navigation">
             <div className="flex flex-col space-y-4">
-              <a href="#features" className="text-gray-300 hover:text-purple-400 transition-colors">
+              <a href="#features" className="text-white hover:text-purple-300 transition-colors font-medium">
                 Features
               </a>
-              <a href="#how-it-works" className="text-gray-300 hover:text-purple-400 transition-colors">
+              <a href="#how-it-works" className="text-white hover:text-purple-300 transition-colors font-medium">
                 How It Works
               </a>
-              <a href="#testimonials" className="text-gray-300 hover:text-purple-400 transition-colors">
+              <a href="#testimonials" className="text-white hover:text-purple-300 transition-colors font-medium">
                 Reviews
               </a>
               <Button
                 variant="ghost"
                 onClick={() => onAuthClick("login")}
-                className="text-gray-300 hover:text-purple-400 justify-start hover:bg-purple-500/10"
+                className="text-white justify-start hover:bg-purple-500/10"
               >
                 Login
               </Button>
               <Button
                 onClick={() => onAuthClick("signup")}
-                className="bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:from-purple-600 hover:to-blue-600"
+                className="bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700"
               >
                 Get Started
               </Button>

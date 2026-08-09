@@ -21,7 +21,7 @@ const HeroSplineBackground = React.memo(function HeroSplineBackground() {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const [shouldLoad, setShouldLoad] = useState(false)
 
-  const containerStyle = React.useMemo(
+  const rootContainerStyle = React.useMemo(
     () => ({
       position: "relative" as const,
       width: "100%",
@@ -30,32 +30,19 @@ const HeroSplineBackground = React.memo(function HeroSplineBackground() {
       overflow: "hidden" as const,
       contain: "layout paint size" as const,
       willChange: "transform" as const,
+      display: "flex" as const,
+      background: `linear-gradient(90deg, #F8F6F2 0%, #F8F6F2 45%, #7AB8A8 60%, #50C29B 100%)`,
     }),
     [],
   )
 
-  const splineStyle = React.useMemo(
+  const halfContainerStyle = React.useMemo(
     () => ({
-      width: "100%",
+      width: "50%",
       height: "100vh",
       pointerEvents: "auto" as const,
-      transform: "translateZ(0)",
-    }),
-    [],
-  )
-
-  const overlayStyle = React.useMemo(
-    () => ({
-      position: "absolute" as const,
-      top: 0,
-      left: 0,
-      width: "100%",
-      height: "100vh",
-      background: `
-            linear-gradient(to right, rgba(44, 51, 56, 0.75), transparent 30%, transparent 70%, rgba(44, 51, 56, 0.75)),
-            linear-gradient(to bottom, transparent 45%, rgba(248, 246, 242, 0.95))
-          `,
-      pointerEvents: "none" as const,
+      overflow: "hidden" as const,
+      position: "relative" as const,
     }),
     [],
   )
@@ -65,12 +52,10 @@ const HeroSplineBackground = React.memo(function HeroSplineBackground() {
     let observer: IntersectionObserver | null = null
 
     const loadWhenIdle = () => {
-      // requestIdleCallback fallback
       const ric = (window as Window & { requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number }).requestIdleCallback;
       if (typeof ric === "function") {
         ric(() => setShouldLoad(true), { timeout: 1500 })
       } else {
-        // Fallback to a micro delay to avoid blocking LCP
         setTimeout(() => setShouldLoad(true), 200)
       }
     }
@@ -90,14 +75,57 @@ const HeroSplineBackground = React.memo(function HeroSplineBackground() {
     return () => observer?.disconnect()
   }, [shouldLoad])
 
+  // DOM cleanup function to remove Spline watermarks upon load
+  const removeSplineLogo = () => {
+    document.querySelectorAll('a[href*="spline.design"]').forEach(el => el.remove());
+    document.querySelectorAll('*').forEach(el => {
+      if (el.shadowRoot) {
+        el.shadowRoot.querySelectorAll('a[href*="spline.design"]').forEach(logo => logo.remove());
+      }
+    });
+  };
+
   return (
-    <div ref={containerRef} style={containerStyle}>
+    <div ref={containerRef} style={rootContainerStyle}>
       {shouldLoad ? (
-        <SplineComponent style={splineStyle} scene="https://prod.spline.design/dJqTIQ-tE3ULUPMi/scene.splinecode" />
+        <>
+          {/* LEFT SIDE: Cream Background with Green Boxes */}
+          <div style={halfContainerStyle}>
+            <div style={{ width: '100%', height: '100%', background: '#7AB8A8', mixBlendMode: 'multiply' }}>
+              <div style={{ width: '100%', height: '100%', mixBlendMode: 'screen' }}>
+                <SplineComponent 
+                  style={{ 
+                    width: '100%', 
+                    height: '100%', 
+                    transform: 'translateZ(0)', 
+                    transformOrigin: 'center center',
+                    filter: 'grayscale(1) invert(1) contrast(1.5)' 
+                  }} 
+                  scene="https://prod.spline.design/dJqTIQ-tE3ULUPMi/scene.splinecode" 
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT SIDE: Green Background with Light Boxes */}
+          <div style={halfContainerStyle}>
+            <div style={{ width: '100%', height: '100%', mixBlendMode: 'screen' }}>
+              <SplineComponent 
+                style={{ 
+                  width: '100%', 
+                  height: '100%', 
+                  transform: 'translateZ(0)', 
+                  transformOrigin: 'center center',
+                  filter: 'grayscale(1) brightness(1.5)' 
+                }} 
+                scene="https://prod.spline.design/dJqTIQ-tE3ULUPMi/scene.splinecode" 
+              />
+            </div>
+          </div>
+        </>
       ) : (
         <HeroSplineLoader />
       )}
-      <div style={overlayStyle} />
     </div>
   )
 })
@@ -105,7 +133,12 @@ const HeroSplineBackground = React.memo(function HeroSplineBackground() {
 // A simple loader to show while the 3D scene is loading.
 function HeroSplineLoader() {
   return (
-    <div style={{ width: "100%", height: "100vh", background: "#000" }} />
+    <div style={{ 
+      width: "100%", 
+      height: "100vh", 
+      display: "flex", 
+      background: `linear-gradient(90deg, #F8F6F2 0%, #F8F6F2 45%, #7AB8A8 60%, #50C29B 100%)` 
+    }} />
   )
 }
 
@@ -140,22 +173,21 @@ const HeroContent = React.memo(function HeroContent({ onGetStarted }: { onGetSta
   const [isPlaying, setIsPlaying] = useState(false)
 
   return (
-    <div className="text-white px-4 max-w-screen-xl mx-auto w-full flex flex-col lg:flex-row justify-between items-start lg:items-center py-16">
-      <div className="w-full lg:w-1/2 pr-0 lg:pr-8 mb-8 lg:mb-0">
-        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 leading-tight tracking-wide text-white">
+    <div className="text-white px-4 max-w-screen-xl mx-auto w-full flex flex-col lg:flex-row justify-between items-start lg:items-center py-24 md:py-32">
+      <div className="w-full lg:w-1/2 pr-0 lg:pr-8 mb-10 lg:mb-0">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 leading-tight tracking-wide text-[#2C3338]">
           Your Digital
           <br />
-          <span className="text-[#A8C5D4]">
+          <span className="text-[#7AB8A8]">
             Sanctuary
           </span>
         </h1>
-        <div className="text-sm text-[#A8C5D4] opacity-90 mt-4 font-mono">Focus • Flow • Clarity • Lumora</div>
+        <div className="text-sm text-[#2C3338]/60 opacity-90 mt-4 font-mono">Focus • Flow • Clarity • Lumora</div>
       </div>
       <div className="w-full lg:w-1/2 pl-0 lg:pl-8 flex flex-col items-start">
-        <p className="text-base sm:text-lg opacity-80 mb-6 max-w-md text-gray-300">
+        <p className="text-base sm:text-lg opacity-80 mb-6 max-w-md text-[#2C3338]/70 font-bold">
           Transform your productivity with an immersive workspace that adapts to your mood. Where focus meets artistry.
-        </p>
-        <div className="flex pointer-events-auto flex-col sm:flex-row items-start space-y-3 sm:space-y-0 sm:space-x-3 mb-8">
+        </p>        <div className="flex pointer-events-auto flex-col sm:flex-row items-start space-y-3 sm:space-y-0 sm:space-x-3 mb-8">
           <button
             onClick={onGetStarted}
             className="bg-[#8FBC8F] hover:bg-[#7AB8A8] text-white font-semibold py-2.5 sm:py-3.5 px-6 sm:px-8 rounded-2xl transition duration-300 hover:scale-105 flex items-center justify-center w-full sm:w-auto shadow-lg"
@@ -225,9 +257,9 @@ const Navbar = React.memo(function Navbar({ onAuthClick }: { onAuthClick: (type:
             </div>
           </div>
           <div className="hidden md:flex items-center space-x-6">
-            <a href="#features" className="text-gray-300 hover:text-[#A8C5D4] text-sm transition duration-150">Features</a>
-            <a href="#how-it-works" className="text-gray-300 hover:text-[#A8C5D4] text-sm transition duration-150">How It Works</a>
-            <a href="#testimonials" className="text-gray-300 hover:text-[#A8C5D4] text-sm transition duration-150">Reviews</a>
+            <a href="#features" className="text-white hover:text-[#A8C5D4] text-sm transition duration-150">Features</a>
+            <a href="#how-it-works" className="text-white hover:text-[#A8C5D4] text-sm transition duration-150">How It Works</a>
+            <a href="#testimonials" className="text-white hover:text-[#A8C5D4] text-sm transition duration-150">Reviews</a>
           </div>
         </div>
         <div className="flex items-center space-x-3">
@@ -285,7 +317,7 @@ const HeroSection = ({
   return (
     <div className="relative">
       <Navbar onAuthClick={onAuthClick} />
-      <div className="relative min-h-screen">
+      <div className="relative min-h-[110vh]">
         <div className="absolute inset-0 z-0 pointer-events-auto">
           <Suspense fallback={<HeroSplineLoader />}>
             <HeroSplineBackground />
@@ -309,7 +341,7 @@ const HeroSection = ({
           <HeroContent onGetStarted={onGetStarted} />
         </div>
       </div>
-      <div className="bg-black relative z-10" style={{ marginTop: "-10vh" }}>
+      <div className="bg-[#F8F6F2] relative z-10" style={{ marginTop: "8vh" }}>
         <ScreenshotSection screenshotRef={screenshotRef} />
       </div>
     </div>
