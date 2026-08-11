@@ -21,7 +21,7 @@ export interface SunTimes {
 
 export function getSunTimes(date: Date, lat: number, lng: number): SunTimes {
   const JD = toJulian(date)
-  const n = Math.floor(JD - 2451545.0 + 0.0008)
+  const n = Math.round(JD - 2451545.0 + 0.0008)
   const Jstar = n - lng / 360
   const M = (357.5291 + 0.98560028 * Jstar) % 360
   const Mrad = M * RAD
