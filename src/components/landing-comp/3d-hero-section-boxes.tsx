@@ -266,7 +266,9 @@ const IsometricHoverField = React.memo(function IsometricHoverField() {
 
 const ScreenshotSection = React.memo(function ScreenshotSection({ screenshotRef }: { screenshotRef: React.RefObject<HTMLDivElement> }) {
   return (
-    <section className="relative z-10 container mx-auto px-4 md:px-6 lg:px-8 mt-11 md:mt-12">
+    // Added a massive negative bottom margin (-mb-40 md:-mb-[400px]) to destroy the 
+    // empty space left behind when the image translates upwards during scroll!
+    <section className="relative z-10 container mx-auto px-4 md:px-6 lg:px-8 mt-11 md:mt-12 -mb-40 md:-mb-[400px]">
       <div
         ref={screenshotRef}
         className="bg-[#2C3338]/80 backdrop-blur-xl rounded-xl overflow-hidden shadow-2xl border border-[#A8C5D4]/30 w-full md:w-[80%] lg:w-[70%] mx-auto"
