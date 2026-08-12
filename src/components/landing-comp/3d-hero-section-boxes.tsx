@@ -1,149 +1,263 @@
 "use client"
 import React from "react"
-import { useEffect, useRef, useState, Suspense } from "react"
-import dynamic from "next/dynamic"
+import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Play, Pause, Volume2, Sparkles } from "lucide-react"
 import { LumoraLogo } from "../lumora"
 
-// Load Spline on client only and code-split it out of the initial bundle
-const SplineComponent = dynamic(
-  () => import("@splinetool/react-spline"),
-  {
-    ssr: false,
-    // Rendering placeholder handled inside HeroSplineBackground for full-height loader
-  }
-)
-
-// --- Lazy-loaded HeroSplineBackground ---
-// The Spline component is heavy. We create a separate component for it
-// and then lazy-load it to prevent it from blocking the initial page render.
-
-const HeroSplineBackground = React.memo(function HeroSplineBackground() {
+const IsometricHoverField = React.memo(function IsometricHoverField() {
   const containerRef = useRef<HTMLDivElement | null>(null)
-  const [shouldLoad, setShouldLoad] = useState(false)
+  const svgRef = useRef<SVGSVGElement | null>(null)
 
-  const rootContainerStyle = React.useMemo(
-    () => ({
-      position: "relative" as const,
-      width: "100%",
-      height: "100vh",
-      pointerEvents: "auto" as const,
-      overflow: "hidden" as const,
-      contain: "layout paint size" as const,
-      willChange: "transform" as const,
-      display: "flex" as const,
-      background: `linear-gradient(90deg, #F8F6F2 0%, #F8F6F2 45%, #7AB8A8 60%, #50C29B 100%)`,
-    }),
-    [],
-  )
-
-  const halfContainerStyle = React.useMemo(
-    () => ({
-      width: "50%",
-      height: "100vh",
-      pointerEvents: "auto" as const,
-      overflow: "hidden" as const,
-      position: "relative" as const,
-    }),
-    [],
-  )
-
-  // Defer loading until hero is in view and browser is idle
   useEffect(() => {
-    let observer: IntersectionObserver | null = null
+    const container = containerRef.current
+    const svg = svgRef.current
+    if (!container || !svg) return
 
-    const loadWhenIdle = () => {
-      const ric = (window as Window & { requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number }).requestIdleCallback;
-      if (typeof ric === "function") {
-        ric(() => setShouldLoad(true), { timeout: 1500 })
-      } else {
-        setTimeout(() => setShouldLoad(true), 200)
-      }
+    const NS = "http://www.w3.org/2000/svg"
+    const W = 34
+    const H = 17
+    const D = 20
+    const RADIUS = 3.8
+    const PLATEAU = RADIUS * 0.4
+    const MAX_LIFT = 75
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+
+    const REST = {
+      top: [143, 192, 165],
+      left: [131, 186, 158],
+      right: [126, 178, 152],
+      stroke: [185, 213, 194],
     }
 
-    if (containerRef.current && !shouldLoad) {
-      observer = new IntersectionObserver((entries) => {
-        const entry = entries[0]
-        if (entry && entry.isIntersecting) {
-          loadWhenIdle()
-          observer?.disconnect()
+    const HOVER = {
+      top: [192, 218, 208],
+      left: [122, 184, 168],
+      right: [98, 141, 132],
+      stroke: [248, 246, 242],
+    }
+
+    type FieldCell = {
+      g: SVGGElement
+      top: SVGPolygonElement
+      left: SVGPolygonElement
+      right: SVGPolygonElement
+    }
+
+    const cells = new Map<string, FieldCell>()
+    let touched = new Set<string>()
+    let originX = 0
+    let originY = 0
+    let pendingPointerEvent: PointerEvent | null = null
+    let rafId: number | null = null
+    let resizeTimer: number | null = null
+
+    const clear = () => {
+      while (svg.firstChild) svg.removeChild(svg.firstChild)
+      cells.clear()
+      touched.clear()
+    }
+
+    const screenPos = (col: number, row: number) => ({
+      x: originX + (col - row) * W,
+      y: originY + (col + row) * H,
+    })
+
+    const rgbStr = (color: number[]) => `rgb(${color[0]},${color[1]},${color[2]})`
+
+    const lerp = (a: number[], b: number[], t: number) => [
+      Math.round(a[0] + (b[0] - a[0]) * t),
+      Math.round(a[1] + (b[1] - a[1]) * t),
+      Math.round(a[2] + (b[2] - a[2]) * t),
+    ]
+
+    const polygon = (points: [number, number][], faceKey: "top" | "left" | "right") => {
+      const element = document.createElementNS(NS, "polygon") as SVGPolygonElement
+      element.setAttribute("points", points.map((pt) => `${pt[0]},${pt[1]}`).join(" "))
+      element.setAttribute("fill", rgbStr(REST[faceKey]))
+      element.setAttribute("stroke", rgbStr(REST.stroke))
+      element.setAttribute("stroke-width", "1")
+      element.dataset.face = faceKey
+      element.style.transition = reduceMotion ? "none" : "fill 0.8s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.8s cubic-bezier(0.16, 1, 0.3, 1)"
+      return element
+    }
+
+    const buildCube = (col: number, row: number, layer: SVGGElement) => {
+      const pos = screenPos(col, row)
+      const x = pos.x
+      const y = pos.y
+      const group = document.createElementNS(NS, "g") as SVGGElement
+      group.style.transition = reduceMotion ? "none" : "transform 1s cubic-bezier(0.16, 1, 0.3, 1)"
+
+      const top = polygon([[x, y - H], [x + W, y], [x, y + H], [x - W, y]], "top")
+      const left = polygon([[x - W, y], [x, y + H], [x, y + H + D], [x - W, y + D]], "left")
+      const right = polygon([[x, y + H], [x + W, y], [x + W, y + D], [x, y + H + D]], "right")
+
+      group.appendChild(top)
+      group.appendChild(left)
+      group.appendChild(right)
+      layer.appendChild(group)
+
+      cells.set(`${col},${row}`, { g: group, top, left, right })
+    }
+
+    const buildGrid = () => {
+      clear()
+      const vw = container.clientWidth || window.innerWidth
+      const vh = container.clientHeight || window.innerHeight
+      svg.setAttribute("viewBox", `0 0 ${vw} ${vh}`)
+      svg.setAttribute("width", `${vw}`)
+      svg.setAttribute("height", `${vh}`)
+
+      const defs = document.createElementNS(NS, "defs")
+      const grad = document.createElementNS(NS, "linearGradient")
+      grad.setAttribute("id", "bgGrad")
+      grad.setAttribute("x1", "0%")
+      grad.setAttribute("y1", "0%")
+      grad.setAttribute("x2", "100%")
+      grad.setAttribute("y2", "100%")
+      const s1 = document.createElementNS(NS, "stop")
+      s1.setAttribute("offset", "0%")
+      s1.setAttribute("stop-color", "#8FBC8F")
+      const s2 = document.createElementNS(NS, "stop")
+      s2.setAttribute("offset", "100%")
+      s2.setAttribute("stop-color", "#7AB8A8")
+      grad.appendChild(s1)
+      grad.appendChild(s2)
+      defs.appendChild(grad)
+      svg.appendChild(defs)
+
+      const rect = document.createElementNS(NS, "rect")
+      rect.setAttribute("width", `${vw}`)
+      rect.setAttribute("height", `${vh}`)
+      rect.setAttribute("fill", "url(#bgGrad)")
+      svg.appendChild(rect)
+
+      originX = vw / 2
+      originY = -40
+
+      const layer = document.createElementNS(NS, "g") as SVGGElement
+      svg.appendChild(layer)
+
+      const N = Math.min(Math.ceil(vw / (2 * W) + vh / (2 * H)) + 6, 90)
+      for (let col = -N; col <= N; col++) {
+        for (let row = -N; row <= N; row++) {
+          const pos = screenPos(col, row)
+          if (pos.x > -W * 2 && pos.x < vw + W * 2 && pos.y > -H * 4 && pos.y < vh + D * 2) {
+            buildCube(col, row, layer)
+          }
         }
-      }, { rootMargin: "200px" })
-
-      observer.observe(containerRef.current)
+      }
     }
 
-    return () => observer?.disconnect()
-  }, [shouldLoad])
+    const smoothstep = (t: number) => t * t * (3 - 2 * t)
+    const groupT = (dist: number) => {
+      if (dist <= PLATEAU) return 1
+      if (dist >= RADIUS) return 0
+      return smoothstep(1 - (dist - PLATEAU) / (RADIUS - PLATEAU))
+    }
 
-  // DOM cleanup function to remove Spline watermarks upon load
-  const removeSplineLogo = () => {
-    document.querySelectorAll('a[href*="spline.design"]').forEach(el => el.remove());
-    document.querySelectorAll('*').forEach(el => {
-      if (el.shadowRoot) {
-        el.shadowRoot.querySelectorAll('a[href*="spline.design"]').forEach(logo => logo.remove());
+    const applyReveal = (key: string, t: number) => {
+      const cell = cells.get(key)
+      if (!cell) return
+      cell.g.setAttribute("transform", `translate(0,${-MAX_LIFT * t})`)
+      cell.top.setAttribute("fill", rgbStr(lerp(REST.top, HOVER.top, t)))
+      cell.left.setAttribute("fill", rgbStr(lerp(REST.left, HOVER.left, t)))
+      cell.right.setAttribute("fill", rgbStr(lerp(REST.right, HOVER.right, t)))
+      const strokeColor = rgbStr(lerp(REST.stroke, HOVER.stroke, t))
+      cell.top.setAttribute("stroke", strokeColor)
+      cell.left.setAttribute("stroke", strokeColor)
+      cell.right.setAttribute("stroke", strokeColor)
+      const sw = 1 + t * 0.8
+      cell.top.setAttribute("stroke-width", sw.toFixed(2))
+      cell.left.setAttribute("stroke-width", sw.toFixed(2))
+      cell.right.setAttribute("stroke-width", sw.toFixed(2))
+    }
+
+    const resetCell = (key: string) => applyReveal(key, 0)
+
+    const processPointerMove = () => {
+      if (!pendingPointerEvent) return
+      const evt = pendingPointerEvent
+      pendingPointerEvent = null
+      rafId = null
+
+      const rect = svg.getBoundingClientRect()
+      const mx = evt.clientX - rect.left
+      const my = evt.clientY - rect.top
+      const A = (mx - originX) / W
+      const B = (my - originY) / H
+      const col = Math.round((A + B) / 2)
+      const row = Math.round((B - A) / 2)
+
+      const bound = Math.ceil(RADIUS)
+      const next = new Set<string>()
+
+      for (let dc = -bound; dc <= bound; dc++) {
+        for (let dr = -bound; dr <= bound; dr++) {
+          const dist = Math.sqrt(dc * dc + dr * dr)
+          if (dist > RADIUS) continue
+          const key = `${col + dc},${row + dr}`
+          if (cells.has(key)) {
+            next.add(key)
+            applyReveal(key, groupT(dist))
+          }
+        }
       }
-    });
-  };
+
+      touched.forEach((key) => {
+        if (!next.has(key)) resetCell(key)
+      })
+      touched = next
+    }
+
+    const handleMove = (evt: PointerEvent) => {
+      pendingPointerEvent = evt
+      if (rafId === null) {
+        rafId = window.requestAnimationFrame(processPointerMove)
+      }
+    }
+
+    const handleLeave = () => {
+      if (rafId !== null) {
+        window.cancelAnimationFrame(rafId)
+        rafId = null
+        pendingPointerEvent = null
+      }
+      touched.forEach(resetCell)
+      touched.clear()
+    }
+
+    const onResize = () => {
+      if (resizeTimer !== null) window.clearTimeout(resizeTimer)
+      resizeTimer = window.setTimeout(buildGrid, 150)
+    }
+
+    svg.addEventListener("pointermove", handleMove)
+    svg.addEventListener("pointerleave", handleLeave)
+    window.addEventListener("resize", onResize)
+
+    buildGrid()
+
+    return () => {
+      svg.removeEventListener("pointermove", handleMove)
+      svg.removeEventListener("pointerleave", handleLeave)
+      window.removeEventListener("resize", onResize)
+      if (resizeTimer !== null) window.clearTimeout(resizeTimer)
+      clear()
+    }
+  }, [])
 
   return (
-    <div ref={containerRef} style={rootContainerStyle}>
-      {shouldLoad ? (
-        <>
-          {/* LEFT SIDE: Cream Background with Green Boxes */}
-          <div style={halfContainerStyle}>
-            <div style={{ width: '100%', height: '100%', background: '#7AB8A8', mixBlendMode: 'multiply' }}>
-              <div style={{ width: '100%', height: '100%', mixBlendMode: 'screen' }}>
-                <SplineComponent 
-                  style={{ 
-                    width: '100%', 
-                    height: '100%', 
-                    transform: 'translateZ(0)', 
-                    transformOrigin: 'center center',
-                    filter: 'grayscale(1) invert(1) contrast(1.5)' 
-                  }} 
-                  scene="https://prod.spline.design/dJqTIQ-tE3ULUPMi/scene.splinecode" 
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* RIGHT SIDE: Green Background with Light Boxes */}
-          <div style={halfContainerStyle}>
-            <div style={{ width: '100%', height: '100%', mixBlendMode: 'screen' }}>
-              <SplineComponent 
-                style={{ 
-                  width: '100%', 
-                  height: '100%', 
-                  transform: 'translateZ(0)', 
-                  transformOrigin: 'center center',
-                  filter: 'grayscale(1) brightness(1.5)' 
-                }} 
-                scene="https://prod.spline.design/dJqTIQ-tE3ULUPMi/scene.splinecode" 
-              />
-            </div>
-          </div>
-        </>
-      ) : (
-        <HeroSplineLoader />
-      )}
+    <div ref={containerRef} className="absolute inset-0 z-0 pointer-events-auto" aria-hidden="true">
+      <svg ref={svgRef} className="block w-full h-full" />
+      <div className="pointer-events-none absolute left-1/2 bottom-8 -translate-x-1/2 text-[13px] tracking-[0.02em] text-white/75">
+        Move your cursor slowly across the cubes
+      </div>
     </div>
   )
 })
-
-// A simple loader to show while the 3D scene is loading.
-function HeroSplineLoader() {
-  return (
-    <div style={{ 
-      width: "100%", 
-      height: "100vh", 
-      display: "flex", 
-      background: `linear-gradient(90deg, #F8F6F2 0%, #F8F6F2 45%, #7AB8A8 60%, #50C29B 100%)` 
-    }} />
-  )
-}
 
 
 // --- Memoized Sub-components ---
@@ -181,7 +295,7 @@ const HeroContent = React.memo(function HeroContent({ onGetStarted }: { onGetSta
         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 leading-tight tracking-wide text-[#2C3338]">
           Your Digital
           <br />
-          <span className="text-[#7AB8A8]">
+          <span className="text-[#7AB8A8]" style={{ WebkitTextStroke: "1px white" } as React.CSSProperties}>
             Sanctuary
           </span>
         </h1>
@@ -320,12 +434,8 @@ const HeroSection = ({
   return (
     <div className="relative">
       <Navbar onAuthClick={onAuthClick} />
-      <div className="relative min-h-[110vh]">
-        <div className="absolute inset-0 z-0 pointer-events-auto">
-          <Suspense fallback={<HeroSplineLoader />}>
-            <HeroSplineBackground />
-          </Suspense>
-        </div>
+        <div className="relative min-h-[110vh]">
+        <IsometricHoverField />
         <div
           ref={heroContentRef}
           style={{

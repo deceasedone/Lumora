@@ -157,3 +157,8 @@
 body::-webkit-scrollbar {
   display: none;
 }
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.7; }
+}
