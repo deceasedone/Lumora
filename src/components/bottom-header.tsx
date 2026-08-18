@@ -10,10 +10,12 @@ import { WorldClockWidget } from "./dashboard-widgets/world-clock-widget"
 import { GradientNavButton } from "./ui/gradient-nav-button"
 import { Zap, Shuffle, Sparkles } from "lucide-react"
 import { showMotivationToast, showFactToast } from "./popups"
+import { useShimeji } from "./shimeji/ShimejiSpec"
 
 export function BottomHeader() {
   const dailyGoal = useAtomValue(dailyGoalAtom)
   const timer = useAtomValue(timerAtom)
+  const { summon, count } = useShimeji()
   const progress = dailyGoal > 0 ? Math.min((timer / dailyGoal) * 100, 100) : 0
 
   return (
@@ -60,9 +62,10 @@ export function BottomHeader() {
 
           {/* Tiny Summon Button below the ring */}
           <button
-            onClick={() => alert('A Virtual Companion will be Added Soon!!')}
+            onClick={() => summon()}
             className="group flex items-center justify-center transition-transform hover:scale-110 outline-none"
-            title="Summon Companion"
+            title={`Summon random companion${count > 0 ? ` (${count} active)` : ""}`}
+            aria-label="Summon random companion"
           >
             <div className="h-6 w-6 sm:h-7 sm:w-7 rounded-full bg-[var(--background)] border border-[var(--border)] flex items-center justify-center shadow-sm group-hover:border-[var(--primary)] group-hover:bg-[var(--primary)]/10 transition-colors">
               <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[var(--primary)] opacity-70 group-hover:opacity-100 transition-opacity" />
